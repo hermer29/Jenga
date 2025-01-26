@@ -1,0 +1,24 @@
+{
+    "name": "JengaEditor",
+    "rootNamespace": "",
+    "references": [
+        "Unity.GraphTools.Foundation.Overdrive",
+        "Unity.GraphTools.Foundation.Overdrive.Model",
+        "Unity.GraphTools.Foundation.Overdrive.Editor",
+        "Unity.GraphToolsFoundation.Searcher.Editor",
+        "JengaCore"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Jenga.OdinSerializer.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

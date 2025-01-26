@@ -1,0 +1,16 @@
+{
+    "name": "JengaRuntime",
+    "rootNamespace": "",
+    "references": ["GUID:f2a1e2bb53a540ef83fc642d5f553c3d"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "OdinSerializer.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

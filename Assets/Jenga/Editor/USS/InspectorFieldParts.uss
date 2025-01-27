@@ -1,0 +1,7 @@
+﻿.game-object-inspector-field {
+    flex-direction: row;
+}
+
+.game-object-inspector-field .ge-editable-label {
+    flex-grow: 1;
+}

@@ -39,7 +39,7 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive
             base.BuildPartList();
 
             PartList.AppendPart(BlackboardVariablePart.Create(rowFieldPartName, Model, this, ussClassName));
-            //PartList.AppendPart(BlackboardVariablePropertiesPart.Create(rowPropertiesPartName, Model, this, ussClassName));
+            PartList.AppendPart(BlackboardVariablePart.Create(rowPropertiesPartName, Model, this, ussClassName));
         }
 
         /// <inheritdoc />

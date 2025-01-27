@@ -72,26 +72,26 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive
             return ui;
         }
 
-        // public static IModelUI CreateVariableDeclarationModelUI(this ElementBuilder elementBuilder, CommandDispatcher commandDispatcher, IVariableDeclarationModel model)
-        // {
-        //     IModelUI ui;
-        //
-        //     if (elementBuilder.Context == BlackboardVariablePropertiesPart.blackboardVariablePropertiesPartCreationContext)
-        //     {
-        //         ui = new BlackboardVariablePropertyView();
-        //     }
-        //     else if (elementBuilder.Context == BlackboardVariablePart.blackboardVariablePartCreationContext)
-        //     {
-        //         ui = new BlackboardField();
-        //     }
-        //     else
-        //     {
-        //         ui = new BlackboardRow();
-        //     }
-        //
-        //     ui.SetupBuildAndUpdate(model, commandDispatcher, elementBuilder.View, elementBuilder.Context);
-        //     return ui;
-        // }
+        public static IModelUI CreateVariableDeclarationModelUI(this ElementBuilder elementBuilder, CommandDispatcher commandDispatcher, IVariableDeclarationModel model)
+        {
+            IModelUI ui;
+
+            if (elementBuilder.Context == BlackboardVariablePropertiesPart.blackboardVariablePropertiesPartCreationContext)
+            {
+                ui = new BlackboardVariablePropertyView();
+            }
+            else if (elementBuilder.Context == BlackboardVariablePart.blackboardVariablePartCreationContext)
+            {
+                ui = new BlackboardField();
+            }
+            else
+            {
+                ui = new BlackboardRow();
+            }
+
+            ui.SetupBuildAndUpdate(model, commandDispatcher, elementBuilder.View, elementBuilder.Context);
+            return ui;
+        }
 
         public static IModelUI CreateBlackboard(this ElementBuilder elementBuilder, CommandDispatcher commandDispatcher, IBlackboardGraphModel model)
         {

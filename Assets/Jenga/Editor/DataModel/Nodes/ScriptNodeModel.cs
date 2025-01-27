@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
 using UnityEngine;
@@ -17,12 +18,12 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
         public string assemblyQualifiedName;
         
         [SerializeField] 
-        GameObject m_Prefab;
+        GameObject[] m_GameObjects;
         
-        public GameObject Prefab
+        public GameObject[] GameObjects
         {
-            get => m_Prefab;
-            set => m_Prefab = value;
+            get => m_GameObjects;
+            set => m_GameObjects = value;
         }
 
         public ScriptNodeModel()
@@ -50,7 +51,8 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
             { 
                 this.AddDataInputPort(methodInfo.Name, TypeHandle.Float);
             }
-            
+
+            m_GameObjects = new GameObject[GetGameObjectFields().Count()];
             // foreach (var fieldInfo in GetFields(type))
             // {
             //     var fieldType = fieldInfo.FieldType;
@@ -68,8 +70,8 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
                 this.AddDataOutputPort(publicInstanceEvent.Name, TypeHandle.Float);
             }
         }
-        
-        public MethodInfo[] GetPublicMethods(Type type)
+
+        private MethodInfo[] GetPublicMethods(Type type)
         {
             if (type == null)
             {
@@ -84,6 +86,23 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
             );
 
             return methodInfos.Where(x => !x.IsSpecialName).ToArray();
+        }
+
+        public IEnumerable<FieldInfo> GetGameObjectFields()
+        {
+            var type = Type.GetType(assemblyQualifiedName);
+            var result = new List<FieldInfo>();
+            foreach (var fieldInfo in GetFields(type))
+            {
+                var fieldType = fieldInfo.FieldType;
+                
+                if (fieldType == typeof(GameObject))
+                {
+                    result.Add(fieldInfo);
+                }
+            }
+
+            return result;
         }
 
         private FieldInfo[] GetFields(Type type)

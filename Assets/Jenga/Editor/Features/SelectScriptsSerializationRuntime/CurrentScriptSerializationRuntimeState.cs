@@ -6,7 +6,7 @@ using UnityEngine.GraphToolsFoundation.CommandStateObserver;
 namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
 {
     [Serializable]
-    public class CurrentScriptSerializationRuntimeState : StateComponent<CurrentScriptSerializationRuntimeState.StateUpdater>
+    public class CurrentScriptSerializationRuntimeState : StateComponent<CurrentScriptSerializationRuntimeState.StateUpdater>, IViewStateComponent
     {
         [SerializeField]
         public JengaRuntime CurrentJengaRuntime;
@@ -17,6 +17,7 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
             {
                 m_State.CurrentJengaRuntime = runtime;
                 m_State.SetUpdateType(UpdateType.Complete);
+                Debug.Log($"Now current jenga runtime is: {m_State.CurrentJengaRuntime.name}", m_State.CurrentJengaRuntime.transform);
             }
         }
 
@@ -24,5 +25,7 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
         {
             
         }
+
+        public Hash128 ViewGUID { get; set; }
     }
 }

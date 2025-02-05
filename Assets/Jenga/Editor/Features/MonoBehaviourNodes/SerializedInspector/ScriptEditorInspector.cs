@@ -29,14 +29,13 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive
             m_Root = new VisualElement { name = PartName };
             m_Root.AddToClassList(ussClassName);
             m_Root.AddToClassList(m_ParentClassName.WithUssElement(PartName));
-
             var scriptNodeModel = (m_Model as ScriptNodeModel);
-            
             if (scriptNodeModel == null)
                 return;
 
             var editor = Editor.CreateEditor(scriptNodeModel.ScriptSerializedInstance);
-            
+
+            editor.
             var imguiWrapper = new IMGUIContainer(() =>
             {
                 if (editor == null)

@@ -18,7 +18,10 @@ namespace Jenga.Editor.DataModel.Commands
 
             (graphToolState as GraphToolState).PushUndo(command);
             var state = graphToolState.AllStateComponents.First(x => x is CurrentScriptSerializationRuntimeState) as CurrentScriptSerializationRuntimeState;
-            state.UpdateScope.ChangeJengaRuntime(command.SelectedRuntime);
+            using (var update = state.UpdateScope)
+            {
+                update.ChangeJengaRuntime(command.SelectedRuntime);
+            }
         }
     }
 }

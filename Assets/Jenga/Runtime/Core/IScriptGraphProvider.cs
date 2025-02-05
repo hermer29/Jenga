@@ -1,4 +1,4 @@
-﻿namespace Jenga.Runtime.Core
+﻿namespace Jenga.Core
 {
     public interface IScriptGraphProvider
     {

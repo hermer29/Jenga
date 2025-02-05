@@ -6,7 +6,8 @@
         "Unity.GraphTools.Foundation.Overdrive.Model",
         "Unity.GraphTools.Foundation.Overdrive.Editor",
         "Unity.GraphToolsFoundation.Searcher.Editor",
-        "JengaCore"
+        "JengaCore",
+        "JengaRuntime"
     ],
     "includePlatforms": [
         "Editor"
@@ -14,9 +15,7 @@
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
-    "precompiledReferences": [
-        "Jenga.OdinSerializer.dll"
-    ],
+    "precompiledReferences": [],
     "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [],

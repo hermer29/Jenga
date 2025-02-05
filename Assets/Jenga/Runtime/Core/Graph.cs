@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using System.Collections.Generic;
 
-namespace Jenga.Runtime.Core
+namespace Jenga.Core
 {
     public struct Graph
     {
-        public ScriptNode[] ScriptNodes;
+        public ScriptInstance[] ScriptNodes;
 
-        public Dictionary<string, ScriptNode> NodesByGUID;
+        public Dictionary<string, ScriptInstance> NodesByGUID;
     }
 }

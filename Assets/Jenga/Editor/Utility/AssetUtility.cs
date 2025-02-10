@@ -6,7 +6,7 @@ namespace Jenga.Editor.Utility
 {
     public static class AssetUtility
     {
-        public static string GetGUID(Type scriptType)
+        public static string GetMonoScriptGUID(Type scriptType)
         {
             if (!scriptType.IsSubclassOf(typeof(MonoBehaviour)))
             {
@@ -29,8 +29,8 @@ namespace Jenga.Editor.Utility
             Debug.LogWarning($"Script of type {scriptType.Name} not found in the project.");
             return null;
         }
-        
-        public static Type FindTypeByGUID(string guid)
+
+        public static Type GetMonoScriptType(string guid)
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
             if (string.IsNullOrEmpty(path))

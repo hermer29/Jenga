@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.GraphToolsFoundation.Overdrive;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
 using UnityEditor.GraphToolsFoundation.Searcher;
 using Jenga.Core.Utilities;
+using Jenga.Editor.ScriptNode;
 using Jenga.Editor.Utility;
-using UnityEditor.SceneManagement;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using Object = UnityEngine.Object;
 
 namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
 {
@@ -34,18 +32,15 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
                     });
                 }, monoBehaviourType.Name));
             }
-           
+            
             var database = new SearcherDatabase(itemList);
             m_Databases.Add(database);
         }
 
-        private static void InitializeScriptNodeModel(INodeModel model, Type monoBehaviourType)
+        private void InitializeScriptNodeModel(INodeModel model, Type monoBehaviourType)
         {
             var scriptModel = (model as ScriptNodeModel);
-            var scriptSerializedInstance = ScriptableObject.CreateInstance(monoBehaviourType);
-            scriptSerializedInstance.name = monoBehaviourType.Name;
-            AssetDatabase.AddObjectToAsset(scriptSerializedInstance, ScriptGraphAsset.LastOpenedAsset);
-            scriptModel.Initialize(AssetUtility.GetGUID(monoBehaviourType), scriptSerializedInstance);
+            scriptModel.Initialize(AssetUtility.GetMonoScriptGUID(monoBehaviourType), SerializableGUID.Generate());
         }
 
         /// <inheritdoc />

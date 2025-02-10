@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Jenga.Editor.ScriptNode;
 using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace UnityEditor.GraphToolsFoundation.Overdrive
@@ -32,14 +34,22 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive
             var scriptNodeModel = (m_Model as ScriptNodeModel);
             if (scriptNodeModel == null)
                 return;
-
-            var editor = Editor.CreateEditor(scriptNodeModel.ScriptSerializedInstance);
-
-            editor.
+            scriptNodeModel.Serializer.Initialize();
+            
+            var editor = Editor.CreateEditor(scriptNodeModel.Serializer.CreatedComponent);
             var imguiWrapper = new IMGUIContainer(() =>
             {
-                if (editor == null)
+                if (scriptNodeModel.Serializer.CreatedComponent == null)
+                {
+                    var text = "Select object with JengaRuntime, \nto allow to use scripts serialization";
+                    GUILayout.Label(text);
                     return;
+                }
+
+                if (editor == null)
+                {
+                    editor = Editor.CreateEditor(scriptNodeModel.Serializer.CreatedComponent);
+                }
                 editor.OnInspectorGUI();
             });
             

@@ -5,6 +5,7 @@ using UnityEditor.Callbacks;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
 using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts.UI;
 using Jenga.Core;
+using Jenga.Editor.ScriptNode;
 using Jenga.Editor.Utility;
 
 namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
@@ -68,7 +69,7 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
                 var scriptNode = node as ScriptNodeModel;
                 var script = new ScriptInstance
                 {
-                    Type = AssetUtility.FindTypeByGUID(scriptNode.MonoScriptGuid),
+                    Type = AssetUtility.GetMonoScriptType(scriptNode.MonoScriptGuid),
                     Events = new List<EventSubscription>(),
                     GUID = scriptNode.Guid.ToGUID()
                 };

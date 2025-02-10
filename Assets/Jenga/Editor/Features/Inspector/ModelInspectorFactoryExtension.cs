@@ -1,3 +1,4 @@
+using Jenga.Editor.ScriptNode;
 using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts;
 
 namespace UnityEditor.GraphToolsFoundation.Overdrive

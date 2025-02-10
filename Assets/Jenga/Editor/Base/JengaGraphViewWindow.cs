@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Jenga.Editor.DataModel.Commands;
 using Jenga.Editor.Utility;
 using Jenga.Runtime;
 using UnityEngine;
@@ -28,18 +27,24 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts.UI
             base.OnEnable();
 
             EditorToolName = "Graph Inspector";
+            ;
         }
 
+        public void ExternalOnSelectionChange()
+        {
+            OnSelectionChange();
+        }
+        
         private void OnSelectionChange()
         {
             if (Selection.activeGameObject != null)
             {
                 if (Selection.activeGameObject.TryGetComponent<JengaRuntime>(out var runtime))
                 {
-                    CommandDispatcher.Dispatch(new ChangeCurrentSerializationRuntimeCommand
+                    if (runtime.obj == GraphView?.GraphModel?.AssetModel)
                     {
-                        SelectedRuntime = runtime
-                    });
+                        (GraphView.GraphModel as ScriptGraphModel).CurrentRuntime.Value = runtime;
+                    }
                 }
             }
             GetWindow<JengaGraphViewWindow>();

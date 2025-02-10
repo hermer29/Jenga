@@ -137,7 +137,16 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.BasicModel
         }
 
         /// <inheritdoc />
-        public void Destroy() => Destroyed = true;
+        public void Destroy()
+        {
+            Destroyed = true;
+            OnDestroyed();
+        }
+
+        public virtual void OnDestroyed()
+        {
+
+        }
 
         /// <inheritdoc />
         public virtual void OnConnection(IPortModel selfConnectedPortModel, IPortModel otherConnectedPortModel)

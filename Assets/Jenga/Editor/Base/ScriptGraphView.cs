@@ -1,4 +1,3 @@
-using UnityEngine;
 namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts.UI
 {
     class ScriptGraphView : GraphView

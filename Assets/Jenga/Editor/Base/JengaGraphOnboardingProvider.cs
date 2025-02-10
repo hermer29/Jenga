@@ -1,8 +1,8 @@
+using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
-using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts;
 using UnityEngine.UIElements;
 
-namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
+namespace Jenga.Editor.Base
 {
     public class JengaGraphOnboardingProvider : OnboardingProvider
     {

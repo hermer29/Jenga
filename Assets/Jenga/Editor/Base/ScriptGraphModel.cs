@@ -4,7 +4,7 @@ using Jenga.Runtime;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
 using UnityEngine;
 
-namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
+namespace Jenga.Editor.Base
 {
     [Serializable]
     public class ScriptGraphModel : GraphModel

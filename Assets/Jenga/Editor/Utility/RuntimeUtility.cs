@@ -2,7 +2,7 @@
 using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEngine;
 
-namespace Jenga.Core.Utilities
+namespace Jenga.Editor.Utility
 {
     public static class RuntimeUtility
     {

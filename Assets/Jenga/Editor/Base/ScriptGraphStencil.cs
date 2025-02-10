@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.GraphToolsFoundation.Overdrive;
-using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
-using UnityEditor.GraphToolsFoundation.Searcher;
 using Jenga.Core.Utilities;
 using Jenga.Editor.ScriptNode;
 using Jenga.Editor.Utility;
+using UnityEditor.GraphToolsFoundation.Overdrive;
+using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
+using UnityEditor.GraphToolsFoundation.Searcher;
+using UnityEngine.GraphToolsFoundation.Overdrive;
 
-namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
+namespace Jenga.Editor.Base
 {
     class ScriptGraphStencil : Stencil, ISearcherDatabaseProvider
     {
@@ -26,6 +26,7 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
             {
                 itemList.Add(new GraphNodeModelSearcherItem(GraphModel, null, t =>
                 {
+                    ;
                     return t.CreateNode(typeof(ScriptNodeModel), initializationCallback: model =>
                     {
                         InitializeScriptNodeModel(model, monoBehaviourType);

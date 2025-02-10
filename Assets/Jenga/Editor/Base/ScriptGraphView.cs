@@ -1,4 +1,6 @@
-namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts.UI
+using UnityEditor.GraphToolsFoundation.Overdrive;
+
+namespace Jenga.Editor.Base
 {
     class ScriptGraphView : GraphView
     {

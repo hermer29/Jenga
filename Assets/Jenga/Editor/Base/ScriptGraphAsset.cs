@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Callbacks;
-using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
-using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts.UI;
 using Jenga.Core;
 using Jenga.Editor.ScriptNode;
 using Jenga.Editor.Utility;
+using UnityEditor;
+using UnityEditor.Callbacks;
+using UnityEditor.GraphToolsFoundation.Overdrive;
+using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
 
-namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
+namespace Jenga.Editor.Base
 {
     [Serializable]
     public class ScriptGraphAsset : GraphAssetModel, IScriptGraphProvider

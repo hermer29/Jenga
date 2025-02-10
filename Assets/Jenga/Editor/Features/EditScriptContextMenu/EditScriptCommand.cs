@@ -1,7 +1,6 @@
 ﻿using Jenga.Editor.ScriptNode;
 using UnityEditor;
 using UnityEditor.GraphToolsFoundation.Overdrive;
-using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts;
 using UnityEngine.GraphToolsFoundation.CommandStateObserver;
 
 namespace Jenga.Editor.Features.EditScriptContextMenu

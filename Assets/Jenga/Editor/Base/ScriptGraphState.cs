@@ -1,9 +1,10 @@
 using System;
 using Jenga.Editor.Features.EditScriptContextMenu;
+using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEngine;
 using UnityEngine.GraphToolsFoundation.CommandStateObserver;
 
-namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts
+namespace Jenga.Editor.Base
 {
     [Serializable]
     public class ScriptGraphState : GraphToolState

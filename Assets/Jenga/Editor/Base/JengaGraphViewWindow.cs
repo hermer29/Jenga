@@ -1,12 +1,9 @@
-using System;
 using System.Collections.Generic;
-using Jenga.Editor.Utility;
 using Jenga.Runtime;
-using UnityEngine;
-using UnityEngine.UIElements;
-using State = UnityEditor.GraphToolsFoundation.Overdrive.GraphToolState;
+using UnityEditor;
+using UnityEditor.GraphToolsFoundation.Overdrive;
 
-namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts.UI
+namespace Jenga.Editor.Base
 {
     internal class JengaGraphViewWindow : GraphViewEditorWindow
     {
@@ -27,7 +24,6 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts.UI
             base.OnEnable();
 
             EditorToolName = "Graph Inspector";
-            ;
         }
 
         public void ExternalOnSelectionChange()

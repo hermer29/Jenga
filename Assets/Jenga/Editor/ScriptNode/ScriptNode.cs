@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Jenga.Editor.Features.EditScriptContextMenu;
 using UnityEditor.GraphToolsFoundation.Overdrive;
-using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts;
 using UnityEngine.UIElements;
 
 namespace Jenga.Editor.ScriptNode

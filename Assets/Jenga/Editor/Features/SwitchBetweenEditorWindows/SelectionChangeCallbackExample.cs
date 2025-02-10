@@ -1,40 +1,42 @@
-﻿using Jenga.Runtime;
+﻿using Jenga.Editor.Base;
+using Jenga.Runtime;
 using UnityEditor;
-using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts.UI;
-using UnityEditor.PackageManager.UI;
 using UnityEngine;
 
-public class SelectionChangeCallbackExample
+namespace Jenga.Editor.Features.SwitchBetweenEditorWindows
 {
-    [InitializeOnLoadMethod]
-    private static void Initialize()
+    public class SelectionChangeCallbackExample
     {
-        Selection.selectionChanged += OnSelectionChanged;
-    }
-
-    private static void OnSelectionChanged()
-    {
-        GameObject selectedObject = Selection.activeGameObject;
-        if (selectedObject != null && selectedObject.TryGetComponent(out JengaRuntime jengaRuntime))
+        [InitializeOnLoadMethod]
+        private static void Initialize()
         {
-            EditorWindow.FocusWindowIfItsOpen<JengaGraphViewWindow>();
-            EditorWindow.GetWindow<JengaGraphViewWindow>().ExternalOnSelectionChange();
+            Selection.selectionChanged += OnSelectionChanged;
         }
-        else
+
+        private static void OnSelectionChanged()
         {
-            System.Type inspectorType = typeof(Editor).Assembly.GetType("UnityEditor.InspectorWindow");
-
-            // Find the currently open Inspector window
-            EditorWindow inspectorWindow = EditorWindow.GetWindow(inspectorType);
-
-            // Focus the Inspector window
-            if (inspectorWindow != null)
+            GameObject selectedObject = Selection.activeGameObject;
+            if (selectedObject != null && selectedObject.TryGetComponent(out JengaRuntime jengaRuntime))
             {
-                inspectorWindow.Focus();
+                EditorWindow.FocusWindowIfItsOpen<JengaGraphViewWindow>();
+                EditorWindow.GetWindow<JengaGraphViewWindow>().ExternalOnSelectionChange();
             }
             else
             {
-                Debug.LogWarning("Inspector window not found.");
+                System.Type inspectorType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.InspectorWindow");
+
+                // Find the currently open Inspector window
+                EditorWindow inspectorWindow = EditorWindow.GetWindow(inspectorType);
+
+                // Focus the Inspector window
+                if (inspectorWindow != null)
+                {
+                    inspectorWindow.Focus();
+                }
+                else
+                {
+                    Debug.LogWarning("Inspector window not found.");
+                }
             }
         }
     }

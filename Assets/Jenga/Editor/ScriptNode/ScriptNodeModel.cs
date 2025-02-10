@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Jenga.Editor.Base;
 using Jenga.Editor.Features.ScriptsSerialization;
 using Jenga.Editor.Utility;
 using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
-using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts;
 using UnityEngine;
 using UnityEngine.GraphToolsFoundation.Overdrive;
 
@@ -28,6 +28,8 @@ namespace Jenga.Editor.ScriptNode
 
         public void Initialize(string scriptGuid, SerializableGUID nodesGuid)
         {
+            if (scriptGuid == null)
+                return;
             NodesGuid = nodesGuid;
             MonoScriptGuid = scriptGuid;
             Title = MonoScriptType.Name;

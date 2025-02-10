@@ -1,7 +1,7 @@
 using Jenga.Editor.ScriptNode;
-using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts;
+using UnityEditor.GraphToolsFoundation.Overdrive;
 
-namespace UnityEditor.GraphToolsFoundation.Overdrive
+namespace Jenga.Editor.Features.Inspector
 {
     [GraphElementsExtensionMethodsCache(typeof(ModelInspectorView))]
     public static class ModelInspectorFactoryExtension

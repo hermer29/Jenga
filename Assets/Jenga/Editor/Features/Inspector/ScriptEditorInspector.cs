@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
 using Jenga.Editor.ScriptNode;
-using UnityEditor.GraphToolsFoundation.Overdrive.Samples.Contexts;
+using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UnityEditor.GraphToolsFoundation.Overdrive
+namespace Jenga.Editor.Features.Inspector
 {
     /// <summary>
     /// Base class for UI parts that display a list of <see cref="BaseModelPropertyField"/>.
@@ -36,7 +34,7 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive
                 return;
             scriptNodeModel.Serializer.Initialize();
             
-            var editor = Editor.CreateEditor(scriptNodeModel.Serializer.CreatedComponent);
+            var editor = UnityEditor.Editor.CreateEditor(scriptNodeModel.Serializer.CreatedComponent);
             var imguiWrapper = new IMGUIContainer(() =>
             {
                 if (scriptNodeModel.Serializer.CreatedComponent == null)
@@ -48,7 +46,7 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive
 
                 if (editor == null)
                 {
-                    editor = Editor.CreateEditor(scriptNodeModel.Serializer.CreatedComponent);
+                    editor = UnityEditor.Editor.CreateEditor(scriptNodeModel.Serializer.CreatedComponent);
                 }
                 editor.OnInspectorGUI();
             });

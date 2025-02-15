@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace Jenga.Runtime
 {
-    public class JengaRuntime : MonoBehaviour
+    public partial class JengaRuntime : MonoBehaviour
     {
         public ScriptableObject obj;
         [HideInInspector]
@@ -76,5 +76,7 @@ namespace Jenga.Runtime
             }
             components.Remove(nodeGuid.ToString());
         }
+        
+        
     }
 }

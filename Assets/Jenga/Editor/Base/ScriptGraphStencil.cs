@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Jenga.Core.Utilities;
 using Jenga.Editor.ScriptNode;
 using Jenga.Editor.Utility;
@@ -22,16 +23,21 @@ namespace Jenga.Editor.Base
         {
             List<SearcherItem> itemList = new List<SearcherItem>();
             
-            foreach (var monoBehaviourType in ReflectionUtility.FindAllMonoBehaviourTypes())
+            foreach (var assemblyGrouping in ReflectionUtility.FindAllMonoBehaviourTypes().GroupBy(x => x.Assembly))
             {
-                itemList.Add(new GraphNodeModelSearcherItem(GraphModel, null, t =>
+                var parent = new SearcherItem(assemblyGrouping.Key.GetName().Name);
+                foreach (var monoBehaviourType in assemblyGrouping)
                 {
-                    ;
-                    return t.CreateNode(typeof(ScriptNodeModel), initializationCallback: model =>
+                    parent.AddChild(new GraphNodeModelSearcherItem(GraphModel, null, t =>
                     {
-                        InitializeScriptNodeModel(model, monoBehaviourType);
-                    });
-                }, monoBehaviourType.Name));
+                        return t.CreateNode(typeof(ScriptNodeModel), initializationCallback: model =>
+                        {
+                            InitializeScriptNodeModel(model, monoBehaviourType);
+                        });
+                    }, monoBehaviourType.Name));
+                }
+                
+                itemList.Add(parent);
             }
             
             var database = new SearcherDatabase(itemList);

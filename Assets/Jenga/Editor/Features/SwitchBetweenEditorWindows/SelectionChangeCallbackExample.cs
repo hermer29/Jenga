@@ -7,10 +7,13 @@ namespace Jenga.Editor.Features.SwitchBetweenEditorWindows
 {
     public class SelectionChangeCallbackExample
     {
+        public const bool IsEnabled = false;
+        
         [InitializeOnLoadMethod]
         private static void Initialize()
         {
-            Selection.selectionChanged += OnSelectionChanged;
+            if(IsEnabled)
+                Selection.selectionChanged += OnSelectionChanged;
         }
 
         private static void OnSelectionChanged()

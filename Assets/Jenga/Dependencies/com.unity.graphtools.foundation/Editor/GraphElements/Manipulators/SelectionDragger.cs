@@ -586,6 +586,11 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive
 
                     if (selectedModels.Any())
                     {
+                        foreach (var graphElementModel in selectedModels)
+                        {
+                            graphElementModel.OnDragEnded();
+                        }
+
                         m_Snapper.EndSnap();
                     }
 

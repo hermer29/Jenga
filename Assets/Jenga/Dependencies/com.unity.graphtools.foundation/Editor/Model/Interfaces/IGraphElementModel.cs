@@ -54,5 +54,7 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive
         /// Resetting a color should set HasUserColor to false.
         /// </remarks>
         void ResetColor();
+
+        void OnDragEnded();
     }
 }

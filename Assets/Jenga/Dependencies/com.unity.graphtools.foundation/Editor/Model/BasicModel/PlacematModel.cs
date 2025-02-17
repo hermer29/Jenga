@@ -72,7 +72,13 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.BasicModel
                     return;
 
                 PositionAndSize = new Rect(value, PositionAndSize.size);
+                OnTransformationUpdated();
             }
+        }
+
+        public virtual void OnTransformationUpdated()
+        {
+
         }
 
         /// <inheritdoc />

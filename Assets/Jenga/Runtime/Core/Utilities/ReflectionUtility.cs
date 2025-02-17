@@ -41,5 +41,37 @@ namespace Jenga.Core.Utilities
                 Debug.LogWarning($"Failed to load types from assembly: {assembly.FullName}. Error: {ex.Message}");
             }
         }
+        
+        public static MethodInfo[] GetPublicMethods(Type type)
+        {
+            if (type == null)
+            {
+                Debug.LogError("Type cannot be null!");
+                return Array.Empty<MethodInfo>();
+            }
+
+            MethodInfo[] methodInfos = type.GetMethods(
+                BindingFlags.Public | 
+                BindingFlags.Instance | BindingFlags.DeclaredOnly
+            );
+
+            return methodInfos.Where(x => !x.IsSpecialName).ToArray();
+        }
+        
+        public static EventInfo[] GetPublicInstanceEvents(Type type)
+        {
+            if (type == null)
+            {
+                Debug.LogError("Type cannot be null!");
+                return Array.Empty<EventInfo>();
+            }
+
+            EventInfo[] eventInfos = type.GetEvents(
+                BindingFlags.Public | 
+                BindingFlags.Instance | 
+                BindingFlags.DeclaredOnly
+            );
+            return eventInfos;
+        }
     }
 }

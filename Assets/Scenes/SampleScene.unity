@@ -335,6 +335,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1238051408}
   - component: {fileID: 1238051407}
+  - component: {fileID: 1238051409}
   m_Layer: 0
   m_Name: JengaRuntime
   m_TagString: Untagged
@@ -363,6 +364,7 @@ MonoBehaviour:
     - 9c6ce8200cb171f0bafd22783522570d
     - 1cc82411b843a1d65fa7ccf1693f0f38
     - fd21c97f6839a8aafa38348972bec024
+    - b004d58ab91db795f066a6114301953e
     values:
     - {fileID: 0}
     - {fileID: 0}
@@ -370,6 +372,12 @@ MonoBehaviour:
     - {fileID: 2073547860}
     - {fileID: 0}
     - {fileID: 2073547861}
+    - {fileID: 1238051409}
+  objectReferences:
+    keys: []
+    values:
+    - {fileID: 2073547854}
+    - {fileID: 705507993}
 --- !u!4 &1238051408
 Transform:
   m_ObjectHideFlags: 0
@@ -385,6 +393,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1238051409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238051406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1be4de8fd7d55304286001c91f2e9ccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ourid: 0
 --- !u!1 &1764687664
 GameObject:
   m_ObjectHideFlags: 0

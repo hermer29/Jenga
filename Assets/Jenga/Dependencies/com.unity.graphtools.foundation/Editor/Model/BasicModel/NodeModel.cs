@@ -74,7 +74,13 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.BasicModel
                     return;
 
                 m_Position = value;
+                OnPositionUpdated();
             }
+        }
+
+        public virtual void OnPositionUpdated()
+        {
+
         }
 
         /// <inheritdoc />

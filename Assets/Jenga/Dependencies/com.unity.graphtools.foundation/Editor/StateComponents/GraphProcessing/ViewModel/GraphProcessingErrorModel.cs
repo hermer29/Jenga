@@ -50,6 +50,11 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive
         {
         }
 
+        public virtual void OnDragEnded()
+        {
+
+        }
+
         /// <inheritdoc/>
         public IGraphElementModel ParentModel { get; }
 

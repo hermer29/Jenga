@@ -119,6 +119,11 @@ namespace UnityEditor.GraphToolsFoundation.Overdrive.BasicModel
             m_HasUserColor = false;
         }
 
+        public virtual void OnDragEnded()
+        {
+
+        }
+
         /// <inheritdoc />
         public virtual void OnBeforeSerialize()
         {

@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Jenga.Core.Utilities;
 using Jenga.Editor.Base;
+using Jenga.Editor.Features.GameObjectGraphPresentation;
 using Jenga.Editor.Features.ScriptsSerialization;
 using Jenga.Editor.Utility;
 using UnityEditor.GraphToolsFoundation.Overdrive;
@@ -13,11 +15,13 @@ namespace Jenga.Editor.ScriptNode
 {
     [Serializable]
     [SearcherItem(typeof(ScriptGraphStencil), SearcherContext.Graph, "")]
-    public class ScriptNodeModel : NodeModel
+    public class ScriptNodeModel : NodeModel, IGameObjectPlacematSuitableNode
     {
         public string MonoScriptGuid;
         [SerializeField] public ScriptSerializer Serializer;
         public SerializableGUID NodesGuid;
+        public SerializableGUID ContainingGameObjectPlacemat;
+        public SerializableGUID ContainingPlacematGuid { get => ContainingGameObjectPlacemat; set => ContainingGameObjectPlacemat = value; }
         
         public ScriptNodeModel()
         {
@@ -53,47 +57,39 @@ namespace Jenga.Editor.ScriptNode
             var type = MonoScriptType;
             Title = type.Name;
 
-            foreach (var methodInfo in GetPublicMethods(type))
+            foreach (var methodInfo in ReflectionUtility.GetPublicMethods(type))
             { 
                 this.AddDataInputPort(methodInfo.Name, TypeHandle.Float);
             }
             
-            foreach (var publicInstanceEvent in GetPublicInstanceEvents(type))
+            foreach (var publicInstanceEvent in ReflectionUtility.GetPublicInstanceEvents(type))
             {
                 this.AddDataOutputPort(publicInstanceEvent.Name, TypeHandle.Float);
             }
         }
 
-        private MethodInfo[] GetPublicMethods(Type type)
+        public override void OnDragEnded()
         {
-            if (type == null)
+            foreach (var graphModelPlacematModel in GraphModel.PlacematModels)
             {
-                Debug.LogError("Type cannot be null!");
-                return Array.Empty<MethodInfo>();
+                if (graphModelPlacematModel is GameObjectPlacematModel placematModel)
+                {
+                    if (RectUtils.IntersectsSegment(placematModel.PositionAndSize, Position, Position))
+                    {
+                        placematModel.ContainingNodes.Add(Guid);
+                        ContainingGameObjectPlacemat = placematModel.Guid;
+                    }
+                    else
+                    {
+                        if (placematModel.ContainingNodes.Contains(Guid))
+                        {
+                            ContainingGameObjectPlacemat = default;
+                            placematModel.ContainingNodes.Remove(Guid);
+                        }
+                    }
+                }
             }
-
-            MethodInfo[] methodInfos = type.GetMethods(
-                BindingFlags.Public | 
-                BindingFlags.Instance | BindingFlags.DeclaredOnly
-            );
-
-            return methodInfos.Where(x => !x.IsSpecialName).ToArray();
         }
-        
-        public EventInfo[] GetPublicInstanceEvents(Type type)
-        {
-            if (type == null)
-            {
-                Debug.LogError("Type cannot be null!");
-                return Array.Empty<EventInfo>();
-            }
 
-            EventInfo[] eventInfos = type.GetEvents(
-                BindingFlags.Public | 
-                BindingFlags.Instance | 
-                BindingFlags.DeclaredOnly
-            );
-            return eventInfos;
-        }
     }
 }

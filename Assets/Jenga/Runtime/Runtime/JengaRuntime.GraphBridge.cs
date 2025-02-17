@@ -19,6 +19,23 @@ namespace Jenga.Runtime
             Destroy(objectReferences[guid]);
             objectReferences.Remove(guid);
         }
+
+        public UnityEngine.Object GetObjectReferenceByGuid(GUID guid)
+        {
+            objectReferences.TryGetValue(guid, out var result);
+            return result;
+        }
+
+        public GUID? GetGuidByObjectReference(UnityEngine.Object obj)
+        {
+            foreach (var (key, value) in objectReferences)
+            {
+                if (value == obj)
+                    return key;
+            }
+
+            return null;
+        }
     }
 }
 #endif

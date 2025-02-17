@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UnityEditor.GraphToolsFoundation.Overdrive
 {
-    static class RectUtils
+    public static class RectUtils
     {
         public static bool IntersectsSegment(Rect rect, Vector2 p1, Vector2 p2)
         {

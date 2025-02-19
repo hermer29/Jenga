@@ -21,7 +21,12 @@ namespace Jenga.Editor.ScriptNode
         [SerializeField] public ScriptSerializer Serializer;
         public SerializableGUID NodesGuid;
         public SerializableGUID ContainingGameObjectPlacemat;
-        public SerializableGUID ContainingPlacematGuid { get => ContainingGameObjectPlacemat; set => ContainingGameObjectPlacemat = value; }
+
+        public SerializableGUID ContainingPlacematGuid
+        {
+            get => ContainingGameObjectPlacemat; 
+            set => ContainingGameObjectPlacemat = value;
+        }
         
         public ScriptNodeModel()
         {

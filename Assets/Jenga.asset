@@ -21,7 +21,8 @@ MonoBehaviour:
       type: {class: ScriptGraphModel, ns: Jenga.Editor.Base, asm: JengaEditor}
       data:
         m_AssetModel: {fileID: 11400000}
-        m_GraphNodeModels: []
+        m_GraphNodeModels:
+        - rid: 5903204667040989190
         m_EdgeModels: []
         m_BadgeModels: []
         m_GraphEdgeModels: []
@@ -63,7 +64,9 @@ MonoBehaviour:
           m_Value0: 4530604970506823994
           m_Value1: 13769493785071284783
         ContainingNodes:
-          _serializedList: []
+          _serializedList:
+          - m_Value0: 2559710306701938170
+            m_Value1: 15319477092778119493
     - rid: 5903204667040989189
       type: {class: GameObjectPlacematModel, ns: Jenga.Editor.Features.GameObjectGraphPresentation, asm: JengaEditor}
       data:
@@ -77,10 +80,10 @@ MonoBehaviour:
         m_Title: Directional Light
         m_Position:
           serializedVersion: 2
-          x: 531.75006
-          y: 1593.9001
-          width: 200
-          height: 200
+          x: 367.54996
+          y: 1594
+          width: 364.45004
+          height: 310.40002
         m_Collapsed: 0
         m_ZOrder: 2
         m_HiddenElements: []
@@ -88,4 +91,36 @@ MonoBehaviour:
           m_Value0: 692198807135371468
           m_Value1: 7998325957974242484
         ContainingNodes:
-          _serializedList: []
+          _serializedList:
+          - m_Value0: 2559710306701938170
+            m_Value1: 15319477092778119493
+    - rid: 5903204667040989190
+      type: {class: ScriptNodeModel, ns: Jenga.Editor.ScriptNode, asm: JengaEditor}
+      data:
+        m_Guid:
+          m_Value0: 2559710306701938170
+          m_Value1: 15319477092778119493
+        m_AssetModel: {fileID: 11400000}
+        m_Color: {r: 0, g: 0, b: 0, a: 0}
+        m_HasUserColor: 0
+        m_Version: 1
+        m_Position: {x: 553.15, y: 1672.6501}
+        m_Title: MergeElement
+        m_InputConstantsById:
+          m_KeyList:
+          - Initialize
+          m_ValueList:
+          - rid: 5903204667040989191
+        m_State: 0
+        m_Collapsed: 0
+        MonoScriptGuid: e597ce9cd0784cde88752fe7ec70b97f
+        NodesGuid:
+          m_Value0: 8085312629082548751
+          m_Value1: 13078597981425879748
+        ContainingGameObjectPlacemat:
+          m_Value0: 3684523900367760631
+          m_Value1: 968616439065482722
+    - rid: 5903204667040989191
+      type: {class: FloatConstant, ns: UnityEditor.GraphToolsFoundation.Overdrive.BasicModel, asm: Unity.GraphTools.Foundation.Overdrive.Model}
+      data:
+        m_Value: 0

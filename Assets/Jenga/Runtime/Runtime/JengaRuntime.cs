@@ -8,6 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace Jenga.Runtime
 {
+    [ExecuteAlways]
     public partial class JengaRuntime : MonoBehaviour
     {
         public ScriptableObject obj;
@@ -16,11 +17,18 @@ namespace Jenga.Runtime
 
         private void Awake()
         {
-            if (obj is not IScriptGraphProvider graphProvider) 
-                return;
+            if (Application.isPlaying)
+            {
+                if (obj is not IScriptGraphProvider graphProvider) 
+                    return;
+                
+                var graph = graphProvider.GetGraph();
+                BindEvents(graph);
+            }
+            #if UNITY_EDITOR
             
-            var graph = graphProvider.GetGraph();
-            BindEvents(graph);
+            #endif
+            
         }
 
         private void BindEvents(Graph graph)

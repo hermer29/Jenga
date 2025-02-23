@@ -14,7 +14,10 @@ namespace Jenga.Editor.Base
     [Serializable]
     public class ScriptGraphAsset : GraphAssetModel, IScriptGraphProvider
     {
+        public event OnNodeCreatedInGameObject OnNodeCreatedInGameObject;
+        
         protected override Type GraphModelType => typeof(ScriptGraphModel);
+
 
         public static ScriptGraphAsset LastOpenedAsset
         {
@@ -56,7 +59,7 @@ namespace Jenga.Editor.Base
                 window.SetCurrentSelection(graphAssetModel, GraphViewEditorWindow.OpenMode.OpenAndFocus);
                 return window != null;
             }
-
+            
             return false;
         }
 

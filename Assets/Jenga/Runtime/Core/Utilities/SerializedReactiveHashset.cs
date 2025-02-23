@@ -5,7 +5,7 @@
     using UnityEngine;
 
     [Serializable]
-    public class SerializedHashset<T>
+    public class SerializedReactiveHashset<T> : ISerializationCallbackReceiver
     {
         // Основной HashSet, который мы используем для хранения данных
         private HashSet<T> _hashSet = new HashSet<T>();
@@ -15,28 +15,34 @@
         private List<T> _serializedList = new List<T>();
 
         // Конструктор
-        public SerializedHashset()
+        public SerializedReactiveHashset()
         {
             // Инициализация HashSet из списка при создании объекта
             _hashSet = new HashSet<T>(_serializedList);
         }
 
+        public event Action<T> OnElementRemoved;
+        public event Action<T> OnElementAdded;
+
         // Метод для добавления элемента
         public void Add(T item)
         {
-            _hashSet.Add(item);
-            UpdateSerializedList();
+            if (_hashSet.Add(item))
+            {
+                OnElementAdded?.Invoke(item);
+                UpdateSerializedList();
+            }
         }
 
         // Метод для удаления элемента
         public bool Remove(T item)
         {
-            bool removed = _hashSet.Remove(item);
-            if (removed)
+            if (_hashSet.Remove(item))
             {
+                OnElementRemoved?.Invoke(item);
                 UpdateSerializedList();
             }
-            return removed;
+            return _hashSet.Remove(item);
         }
 
         // Метод для проверки наличия элемента
@@ -48,6 +54,10 @@
         // Метод для очистки коллекции
         public void Clear()
         {
+            foreach (var element in _hashSet)
+            {
+                OnElementRemoved?.Invoke(element);
+            }
             _hashSet.Clear();
             UpdateSerializedList();
         }

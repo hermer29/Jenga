@@ -36,6 +36,11 @@ namespace Jenga.Runtime
 
             return null;
         }
+
+        public void RemoveObjectReference(GUID guid)
+        {
+            objectReferences.Remove(guid);
+        }
     }
 }
 #endif

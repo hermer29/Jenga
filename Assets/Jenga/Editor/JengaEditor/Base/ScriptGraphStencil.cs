@@ -47,7 +47,13 @@ namespace Jenga.Editor.Base
         private void InitializeScriptNodeModel(INodeModel model, Type monoBehaviourType)
         {
             var scriptModel = (model as ScriptNodeModel);
-            scriptModel.Initialize(AssetUtility.GetMonoScriptGUID(monoBehaviourType), SerializableGUID.Generate());
+            scriptModel.Initialize(AssetUtility.GetMonoScriptGUID(monoBehaviourType));
+        }
+
+        public override bool GetPortCapacity(IPortModel portModel, out PortCapacity capacity)
+        {
+            capacity = PortCapacity.Multi;
+            return true;
         }
 
         /// <inheritdoc />

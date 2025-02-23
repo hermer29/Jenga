@@ -1,6 +1,7 @@
 using System;
 using Jenga.Editor.Features.EditScriptContextMenu;
 using Jenga.Editor.Features.GameObjectGraphPresentation;
+using Jenga.Editor.JengaEditor.Features.GraphSceneMirror;
 using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEngine;
 using UnityEngine.GraphToolsFoundation.CommandStateObserver;

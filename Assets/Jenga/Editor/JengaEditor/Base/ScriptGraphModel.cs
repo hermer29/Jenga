@@ -40,7 +40,7 @@ namespace Jenga.Editor.Base
         {
             var placematModelType = GetGameObjectPlacematType();
             var placematModel = Instantiate<IPlacematModel>(placematModelType) as GameObjectPlacematModel;
-            placematModel.GameObjectGuid = gameObjectGuid;
+            placematModel.GameObjectGuid.Value = gameObjectGuid;
             placematModel.PositionAndSize = position;
             placematModel.AssetModel = AssetModel;
             placematModel.ZOrder = 0;

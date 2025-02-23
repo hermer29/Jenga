@@ -1,7 +1,10 @@
 {
     "name": "JengaRuntime",
     "rootNamespace": "",
-    "references": ["GUID:f2a1e2bb53a540ef83fc642d5f553c3d"],
+    "references": [
+        "GUID:f2a1e2bb53a540ef83fc642d5f553c3d",
+        "GUID:c261977dea7a4e8eb424392edf3e2890"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

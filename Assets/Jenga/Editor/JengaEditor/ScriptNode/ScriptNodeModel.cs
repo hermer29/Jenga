@@ -19,7 +19,6 @@ namespace Jenga.Editor.ScriptNode
     {
         public string MonoScriptGuid;
         [SerializeField] public ScriptSerializer Serializer;
-        public SerializableGUID NodesGuid;
         public SerializableGUID ContainingGameObjectPlacemat;
 
         public SerializableGUID ContainingPlacematGuid
@@ -35,14 +34,12 @@ namespace Jenga.Editor.ScriptNode
 
         public Type MonoScriptType => AssetUtility.GetMonoScriptType(MonoScriptGuid);
 
-        public void Initialize(string scriptGuid, SerializableGUID nodesGuid)
+        public void Initialize(string scriptGuid)
         {
             if (scriptGuid == null)
                 return;
-            NodesGuid = nodesGuid;
             MonoScriptGuid = scriptGuid;
             Title = MonoScriptType.Name;
-            Debug.Log($"Nodes guid updated: {nodesGuid}");
         }
 
         public override void OnDestroyed()
@@ -58,13 +55,13 @@ namespace Jenga.Editor.ScriptNode
                 return;
 
             Serializer = new ScriptSerializer((ScriptGraphModel)m_AssetModel.GraphModel,
-                NodesGuid.ToGUID(), MonoScriptGuid);
+                Guid.ToGUID(), MonoScriptGuid, RuntimeUtility.FindRelatedRuntimeOnActiveScene((GraphAssetModel)AssetModel));
             var type = MonoScriptType;
             Title = type.Name;
 
             foreach (var methodInfo in ReflectionUtility.GetPublicMethods(type))
             { 
-                this.AddDataInputPort(methodInfo.Name, TypeHandle.Float);
+                var inputPort = this.AddDataInputPort(methodInfo.Name, TypeHandle.Float);
             }
             
             foreach (var publicInstanceEvent in ReflectionUtility.GetPublicInstanceEvents(type))

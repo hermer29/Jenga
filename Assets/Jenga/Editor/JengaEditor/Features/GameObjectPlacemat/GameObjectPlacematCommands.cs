@@ -1,6 +1,8 @@
 ﻿using Jenga.Editor.Base;
+using Jenga.Editor.ScriptNode;
 using Jenga.Editor.Utility;
 using Jenga.Runtime;
+using UnityEditor;
 using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEngine;
 using UnityEngine.GraphToolsFoundation.CommandStateObserver;
@@ -8,6 +10,8 @@ using UnityEngine.GraphToolsFoundation.Overdrive;
 
 namespace Jenga.Editor.Features.GameObjectGraphPresentation
 {
+    
+    
     public class CreateGameObjectPlacematCommand : UndoableCommand
     {
         public Rect Position;
@@ -28,7 +32,8 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
         {
             var graphToolState = state as ScriptGraphState;
             graphToolState.PushUndo(command);
-            var runtime = RuntimeUtility.FindRelatedRuntimeOnActiveScene((GraphAssetModel)graphToolState.GraphViewState.AssetModel);
+            var assetModel = (GraphAssetModel)graphToolState.GraphViewState.AssetModel;
+            var runtime = RuntimeUtility.FindRelatedRuntimeOnActiveScene(assetModel);
             
             if (runtime == null)
             {
@@ -44,6 +49,7 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
                 
                 var scriptGraphModel = graphToolState.GraphViewState.GraphModel as ScriptGraphModel;
                 var placematModel = scriptGraphModel.CreateGameObjectPlacemat(command.Position, guid, selectedGameObject.name);
+
                 if (command.Title != null)
                     placematModel.Title = command.Title;
 

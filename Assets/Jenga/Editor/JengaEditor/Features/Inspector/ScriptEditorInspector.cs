@@ -32,9 +32,10 @@ namespace Jenga.Editor.Features.Inspector
             var scriptNodeModel = (m_Model as ScriptNodeModel);
             if (scriptNodeModel == null)
                 return;
-            scriptNodeModel.Serializer.Initialize();
             
             var editor = UnityEditor.Editor.CreateEditor(scriptNodeModel.Serializer.CreatedComponent);
+            if (editor == null)
+                return;
             var imguiWrapper = new IMGUIContainer(() =>
             {
                 if (scriptNodeModel.Serializer.CreatedComponent == null)
@@ -48,6 +49,9 @@ namespace Jenga.Editor.Features.Inspector
                 {
                     editor = UnityEditor.Editor.CreateEditor(scriptNodeModel.Serializer.CreatedComponent);
                 }
+                if (editor == null)
+                    return;
+                
                 editor.OnInspectorGUI();
             });
             

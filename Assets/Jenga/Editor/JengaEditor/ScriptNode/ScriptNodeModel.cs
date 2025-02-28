@@ -6,6 +6,7 @@ using Jenga.Editor.Base;
 using Jenga.Editor.Features.GameObjectGraphPresentation;
 using Jenga.Editor.Features.ScriptsSerialization;
 using Jenga.Editor.Utility;
+using Jenga.Runtime;
 using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
 using UnityEngine;
@@ -20,6 +21,7 @@ namespace Jenga.Editor.ScriptNode
         public string MonoScriptGuid;
         [SerializeField] public ScriptSerializer Serializer;
         public SerializableGUID ContainingGameObjectPlacemat;
+        [SerializeReference] public GameObjectPlacematModel RelatedGameOjbectPlacemat;
 
         public SerializableGUID ContainingPlacematGuid
         {
@@ -44,7 +46,23 @@ namespace Jenga.Editor.ScriptNode
 
         public override void OnDestroyed()
         {
-            Serializer.Dispose();
+            
+        }
+
+        public override void OnConnection(IPortModel selfConnectedPortModel, IPortModel otherConnectedPortModel)
+        {
+            var placemat = GraphModel.PlacematModels.OfType<GameObjectPlacematModel>()
+                .FirstOrDefault(x => x.ContainingNodes.Contains(ContainingPlacematGuid));
+            if (placemat.RelatedPrefab != null)
+            {
+                var database = placemat.RelatedPrefab.GetComponent<ReferencesDatabase>();
+                database
+            }
+        }
+
+        public override void OnDisconnection(IPortModel selfConnectedPortModel, IPortModel otherConnectedPortModel)
+        {
+            
         }
 
         protected override void OnDefineNode()

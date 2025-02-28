@@ -35,7 +35,6 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
         if (keys.Count != values.Count)
         {
             Debug.LogError("Keys and values count mismatch in SerializableDictionary.");
-            return;
         }
 
         for (int i = 0; i < keys.Count; i++)

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Jenga.Editor.Features.ScriptsSerialization
 {
     [Serializable]
-    public class ScriptSerializer : IDisposable
+    public class ScriptSerializer
     {
         private ScriptGraphModel model;
         private GUID guid;
@@ -23,15 +23,6 @@ namespace Jenga.Editor.Features.ScriptsSerialization
             this.runtime = runtime;
         }
 
-        public UnityEngine.Object CreatedComponent => runtime.GetObjectReferenceByGuid(guid);
-
-        public void Dispose()
-        {
-            if (model.CurrentRuntime.Value != null)
-            {
-                Debug.Log($"Removing component because node is removed: {AssetUtility.GetMonoScriptType(monoScriptGuid)}");
-                model.CurrentRuntime.Value.RemoveComponent(guid);
-            }
-        }
+        public UnityEngine.Object CreatedComponent => runtime.ReferencesDatabase.GetObjectReferenceByGuid(guid);
     }
 }

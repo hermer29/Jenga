@@ -28,7 +28,8 @@ namespace Jenga.Editor.Base
                 Vector2 mousePosition = menuAction?.eventInfo?.mousePosition ?? Event.current.mousePosition;
                 Vector2 graphPosition = ContentViewContainer.WorldToLocal(mousePosition);
 
-                CommandDispatcher.Dispatch(new CreateGameObjectPlacematCommand(new Rect(graphPosition.x, graphPosition.y, 200, 200)));
+                var placematRect = new Rect(graphPosition.x, graphPosition.y, 200, 200);
+                CommandDispatcher.Dispatch(new CreateGameObjectPlacematCommand(placematRect));
             });
         }
     }

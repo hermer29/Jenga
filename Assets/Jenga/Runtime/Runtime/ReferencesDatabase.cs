@@ -5,13 +5,27 @@ using UnityEngine;
 
 namespace Jenga.Runtime
 {
-    public partial class JengaRuntime
+    public class ReferencesDatabase : MonoBehaviour
     {
-        [SerializeField] private SerializableDictionary<GUID, UnityEngine.Object> objectReferences;
+        [SerializeField] 
+        private SerializableDictionary<GUID, UnityEngine.Object> objectReferences;
+
+        [SerializeField]
+        private List<NodeEvent> events;
 
         public void AddObjectReference(GUID guid, UnityEngine.Object referenced)
         {
             objectReferences.Add(guid, referenced);
+        }
+
+        public void AddEvent(NodeEvent evt)
+        {
+            events.Add(evt);
+        }
+
+        public void RemoveEvent(NodeEvent evt)
+        {
+            events.Remove(evt);
         }
 
         public void DeleteObject(GUID guid)

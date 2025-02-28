@@ -4,10 +4,12 @@ using System.Linq;
 using Jenga.Core;
 using Jenga.Editor.ScriptNode;
 using Jenga.Editor.Utility;
+using Jenga.Runtime;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
+using UnityEngine;
 
 namespace Jenga.Editor.Base
 {
@@ -17,7 +19,6 @@ namespace Jenga.Editor.Base
         public event OnNodeCreatedInGameObject OnNodeCreatedInGameObject;
         
         protected override Type GraphModelType => typeof(ScriptGraphModel);
-
 
         public static ScriptGraphAsset LastOpenedAsset
         {

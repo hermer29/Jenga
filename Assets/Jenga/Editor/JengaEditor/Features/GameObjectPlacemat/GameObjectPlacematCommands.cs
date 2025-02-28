@@ -1,4 +1,5 @@
-﻿using Jenga.Editor.Base;
+﻿using System.Linq;
+using Jenga.Editor.Base;
 using Jenga.Editor.ScriptNode;
 using Jenga.Editor.Utility;
 using Jenga.Runtime;
@@ -14,42 +15,63 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
     
     public class CreateGameObjectPlacematCommand : UndoableCommand
     {
-        public Rect Position;
-        public string Title;
+        public readonly Rect? Position;
+        public readonly string Title;
+        public readonly Object menuCommandContext;
 
         public CreateGameObjectPlacematCommand()
         {
             UndoString = "Create Placemat";
         }
         
-        public CreateGameObjectPlacematCommand(Rect position, string title = null) : this()
+        public CreateGameObjectPlacematCommand(Rect? position, string title = null, Object menuCommandContext = null) : this()
         {
             Position = position;
             Title = title;
+            this.menuCommandContext = menuCommandContext;
         }
         
         public static async void DefaultCommandHandler(IState state, CreateGameObjectPlacematCommand command)
         {
-            var graphToolState = state as ScriptGraphState;
+            var graphToolState = (ScriptGraphState)state;
             graphToolState.PushUndo(command);
-            var assetModel = (GraphAssetModel)graphToolState.GraphViewState.AssetModel;
-            var runtime = RuntimeUtility.FindRelatedRuntimeOnActiveScene(assetModel);
+            var assetModel = (ScriptGraphAsset)graphToolState.GraphViewState.AssetModel;
+
+            var context = command.menuCommandContext;
             
-            if (runtime == null)
+            GameObject selectedGameObject = (GameObject)(context ? context : 
+                await GameObjectSelectorWindow.ShowWindowAsync());
+
+            ReferencesDatabase referencesDatabase;
+            GameObject relatedPrefab = null;
+
+            var prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
+            if (PrefabUtility.IsPartOfAnyPrefab(selectedGameObject) || 
+                prefabStage != null)
             {
-                Debug.LogError("Runtime with this graph asset on active scene is not found!");
-                return;
+                
+                relatedPrefab = PrefabUtility.GetNearestPrefabInstanceRoot(selectedGameObject) ?? prefabStage.prefabContentsRoot;
+                if ((referencesDatabase = relatedPrefab.GetComponent<ReferencesDatabase>()) == null)
+                {
+                    referencesDatabase = relatedPrefab.AddComponent<ReferencesDatabase>();
+                }
+
+            }
+            else
+            {
+                referencesDatabase = RuntimeUtility.FindRelatedRuntimeOnActiveScene(assetModel).ReferencesDatabase;
             }
             
-            var selectedGameObject = await GameObjectSelectorWindow.ShowWindowAsync();
 
             using (var graphUpdater = graphToolState.GraphViewState.UpdateScope)
             {
-                var guid = GetGuidForObject(selectedGameObject, runtime);
+                var guid = GetGuidForObject(selectedGameObject, referencesDatabase);
                 
-                var scriptGraphModel = graphToolState.GraphViewState.GraphModel as ScriptGraphModel;
-                var placematModel = scriptGraphModel.CreateGameObjectPlacemat(command.Position, guid, selectedGameObject.name);
-
+                var scriptGraphModel = (ScriptGraphModel)graphToolState.GraphViewState.GraphModel;
+                var positionToSpawn = command.Position ?? new Rect(scriptGraphModel.NodeModels.First().Position, Vector2.zero);
+                var placematModel = scriptGraphModel.CreateGameObjectPlacemat(positionToSpawn, guid, selectedGameObject.name) as GameObjectPlacematModel;
+                placematModel.RelatedPrefab = relatedPrefab;
+                
                 if (command.Title != null)
                     placematModel.Title = command.Title;
 
@@ -57,7 +79,7 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
             }
         }
 
-        private static SerializableGUID GetGuidForObject(GameObject gameObject, JengaRuntime runtime)
+        private static SerializableGUID GetGuidForObject(GameObject gameObject, ReferencesDatabase runtime)
         {
             var existedGuidForThisObject = runtime.GetGuidByObjectReference(gameObject);
             if (existedGuidForThisObject != null)

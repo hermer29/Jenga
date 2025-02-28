@@ -4,6 +4,7 @@ using Jenga.Core.Utilities;
 using Jenga.Core.Utilities.Reactivity;
 using Jenga.Editor.Base;
 using Jenga.Editor.ScriptNode;
+using Jenga.Runtime;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
 using UnityEngine;
 using UnityEngine.GraphToolsFoundation.Overdrive;
@@ -18,6 +19,7 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
     {
         public ReactiveProperty<SerializableGUID> GameObjectGuid = new ReactiveProperty<SerializableGUID>(default);
         public SerializedReactiveHashset<SerializableGUID> ContainingNodes = new SerializedReactiveHashset<SerializableGUID>();
+        public GameObject RelatedPrefab;
 
         public GameObjectPlacematModel() : base()
         {
@@ -27,24 +29,33 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
             void OnElementAdded(SerializableGUID scriptNodesGuid)
             {
                 var scriptGraphModel = GraphModel as ScriptGraphModel;
-                var runtime = scriptGraphModel.CurrentRuntime.Value;
-                var assetModel = scriptGraphModel.AssetModel;
+                var referencesDatabase = GetRelatedReferencesDatabase();
+                var assetModel = (ScriptGraphAsset) scriptGraphModel.AssetModel;
                 var gameObjectGuid = GameObjectGuid.Value;
-                var gameObject = (GameObject) runtime.GetObjectReferenceByGuid(gameObjectGuid.ToGUID());
+                var gameObject = (GameObject) referencesDatabase.GetObjectReferenceByGuid(gameObjectGuid.ToGUID());
                 var componentGuid = scriptNodesGuid;
                 assetModel.GraphModel.TryGetModelFromGuid(scriptNodesGuid, out var graphNode);
                 var scriptNodeModel = (ScriptNodeModel)graphNode;
-                runtime.AddObjectReference(componentGuid.ToGUID(), gameObject.AddComponent(scriptNodeModel.MonoScriptType));
+                referencesDatabase.AddObjectReference(componentGuid.ToGUID(), gameObject.AddComponent(scriptNodeModel.MonoScriptType));
             }
 
             void OnElementRemoved(SerializableGUID scriptNodeGuid)
             {
-                var scriptGraphModel = GraphModel as ScriptGraphModel;
-                var runtime = scriptGraphModel.CurrentRuntime.Value;
-                var component = runtime.GetObjectReferenceByGuid(scriptNodeGuid.ToGUID());
+                var referencesDatabase = GetRelatedReferencesDatabase();
+                var component = referencesDatabase.GetObjectReferenceByGuid(scriptNodeGuid.ToGUID());
                 Object.DestroyImmediate(component);
-                runtime.RemoveObjectReference(scriptNodeGuid.ToGUID());
+                referencesDatabase.RemoveObjectReference(scriptNodeGuid.ToGUID());
             }
+        }
+
+        private ReferencesDatabase GetRelatedReferencesDatabase()
+        {
+            if (RelatedPrefab != null)
+            {
+                return RelatedPrefab.GetComponent<ReferencesDatabase>();
+            }
+            var scriptGraphModel = GraphModel as ScriptGraphModel;
+            return scriptGraphModel.CurrentRuntime.Value.ReferencesDatabase;
         }
 
         public override void OnDragEnded()

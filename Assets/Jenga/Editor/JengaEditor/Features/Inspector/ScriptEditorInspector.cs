@@ -35,7 +35,10 @@ namespace Jenga.Editor.Features.Inspector
             
             var editor = UnityEditor.Editor.CreateEditor(scriptNodeModel.Serializer.CreatedComponent);
             if (editor == null)
+            {
+                m_Root.Clear();
                 return;
+            }
             var imguiWrapper = new IMGUIContainer(() =>
             {
                 if (scriptNodeModel.Serializer.CreatedComponent == null)

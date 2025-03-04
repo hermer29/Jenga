@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+﻿using Jenga.Core;
 using UnityEngine.Device;
 
 namespace Jenga.Runtime
@@ -6,24 +6,24 @@ namespace Jenga.Runtime
     public partial class ReferencesDatabase
     {
 #if UNITY_EDITOR
-        public void AddObjectReference(string guid, UnityEngine.Object referenced)
+        public void AddObjectReference(SerializableGUIDJengaVersion guid, UnityEngine.Object referenced)
         {
             objectReferences.Add(guid, referenced);
         }
 
-        public void DeleteObject(string guid)
+        public void DeleteObject(SerializableGUIDJengaVersion guid)
         {
-            Destroy(objectReferences[guid.ToString()]);
-            objectReferences.Remove(guid.ToString());
+            Destroy(objectReferences[guid]);
+            objectReferences.Remove(guid);
         }
 
-        public UnityEngine.Object GetObjectReferenceByGuid(GUID guid)
+        public UnityEngine.Object GetObjectReferenceByGuid(SerializableGUIDJengaVersion guid)
         {
-            objectReferences.TryGetValue(guid.ToString(), out var result);
+            objectReferences.TryGetValue(guid, out var result);
             return result;
         }
 
-        public string? GetGuidByObjectReference(UnityEngine.Object obj)
+        public SerializableGUIDJengaVersion GetGuidByObjectReference(UnityEngine.Object obj)
         {
             foreach (var (key, value) in objectReferences)
             {
@@ -33,12 +33,12 @@ namespace Jenga.Runtime
                 }
             }
 
-            return null;
+            return default;
         }
 
-        public void RemoveObjectReference(string guid)
+        public void RemoveObjectReference(SerializableGUIDJengaVersion guid)
         {
-            objectReferences.Remove(guid.ToString());
+            objectReferences.Remove(guid);
         }
         
         public void AddEvent(NodeEvent evt)

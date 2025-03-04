@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using Jenga.Core;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Object = UnityEngine.Object;
@@ -19,15 +21,15 @@ namespace Jenga.Runtime
         private List<NodeEvent> events;
 
         [SerializeField] 
-        private SerializableDictionary<string, UnityEngine.Object> objectReferences;
+        private SerializableDictionary<SerializableGUIDJengaVersion, UnityEngine.Object> objectReferences;
 
         private static event Action<NodeEvent> EventRegisterRequested;
-        private static event Action<string, UnityEngine.Object> ObjectRegisterRequested;
+        private static event Action<SerializableGUIDJengaVersion, UnityEngine.Object> ObjectRegisterRequested;
 
         private static ReferencesDatabase Master;
 
         private HashSet<string> eventsInGame;
-        private Dictionary<string, UnityEngine.Object> componentsInGame;
+        private Dictionary<SerializableGUIDJengaVersion, List<UnityEngine.Object>> componentsInGame;
 
         public void Awake()
         {
@@ -35,7 +37,7 @@ namespace Jenga.Runtime
             {
                 Master = this;
                 eventsInGame = new HashSet<string>();
-                componentsInGame = new Dictionary<string, Object>();
+                componentsInGame = new Dictionary<SerializableGUIDJengaVersion, List<UnityEngine.Object>>();
                 EventRegisterRequested += HandleRegisteringEvent;
                 ObjectRegisterRequested += HandleRegisteringObject;
             }
@@ -55,7 +57,8 @@ namespace Jenga.Runtime
         {
             if (componentsInGame.ContainsKey(nodeEvent.SendersGuid) && componentsInGame.ContainsKey(nodeEvent.ReceiversGuid))
             {
-                var unitedGuid = nodeEvent.SendersGuid + nodeEvent.ReceiversGuid + nodeEvent.SendersEventName + nodeEvent.ReceiversMethodName;
+                var unitedGuid = SerializableGUIDJengaVersion.Generate(nodeEvent.SendersGuid, nodeEvent.ReceiversGuid) 
+                                 + nodeEvent.SendersEventName + nodeEvent.ReceiversMethodName;
                 
                 if (!eventsInGame.Contains(unitedGuid))
                 {
@@ -67,7 +70,7 @@ namespace Jenga.Runtime
 
         private void SubscribeMethodToEvent(NodeEvent nodeEvent)
         {
-            var senderObject = componentsInGame[nodeEvent.SendersGuid];
+            var senderObject = componentsInGame[nodeEvent.SendersGuid].First();
             var receiverObject = componentsInGame[nodeEvent.ReceiversGuid];
             var senderType = senderObject.GetType();
             EventInfo eventInfo = senderType.GetEvent(nodeEvent.SendersEventName);
@@ -79,9 +82,13 @@ namespace Jenga.Runtime
             eventInfo.AddEventHandler(senderObject, handler);
         }
 
-        private void HandleRegisteringObject(string guid, UnityEngine.Object obj)
+        private void HandleRegisteringObject(SerializableGUIDJengaVersion guid, UnityEngine.Object obj)
         {
-            componentsInGame.Add(guid, obj);
+            if (!componentsInGame.ContainsKey(guid))
+            {
+                componentsInGame.Add(guid, new List<Object>());
+            }
+            componentsInGame[guid].Add(obj);
         }
     }
 }

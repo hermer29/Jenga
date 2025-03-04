@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Jenga.Core;
 using Jenga.Editor.Base;
 using Jenga.Editor.ScriptNode;
 using Jenga.Editor.Utility;
@@ -43,19 +44,23 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
                 await GameObjectSelectorWindow.ShowWindowAsync());
 
             ReferencesDatabase referencesDatabase;
-            GameObject relatedPrefab = null;
+            UnityEngine.Object relatedPrefab = null;
 
             var prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
             if (PrefabUtility.IsPartOfAnyPrefab(selectedGameObject) || 
                 prefabStage != null)
             {
-                
-                relatedPrefab = PrefabUtility.GetNearestPrefabInstanceRoot(selectedGameObject) ?? prefabStage.prefabContentsRoot;
-                if ((referencesDatabase = relatedPrefab.GetComponent<ReferencesDatabase>()) == null)
+                var prefabRootObject = 
+                if (prefabStage != null)
                 {
-                    referencesDatabase = relatedPrefab.AddComponent<ReferencesDatabase>();
+                    
                 }
-
+                var prefabInstanceRoot = PrefabUtility.GetNearestPrefabInstanceRoot(selectedGameObject);
+                relatedPrefab = PrefabUtility.GetPrefabInstanceHandle(selectedGameObject) ?? prefabStage.prefabContentsRoot;
+                if ((referencesDatabase = prefabInstanceRoot.GetComponent<ReferencesDatabase>()) == null)
+                {
+                    referencesDatabase = prefabInstanceRoot.AddComponent<ReferencesDatabase>();
+                }
             }
             else
             {
@@ -70,7 +75,7 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
                 var scriptGraphModel = (ScriptGraphModel)graphToolState.GraphViewState.GraphModel;
                 var positionToSpawn = command.Position ?? new Rect(scriptGraphModel.NodeModels.First().Position, Vector2.zero);
                 var placematModel = scriptGraphModel.CreateGameObjectPlacemat(positionToSpawn, guid, selectedGameObject.name) as GameObjectPlacematModel;
-                placematModel.RelatedPrefab = relatedPrefab;
+                placematModel.RelatedPrefab = relatedPrefab as GameObject;
                 
                 if (command.Title != null)
                     placematModel.Title = command.Title;
@@ -82,14 +87,14 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
         private static SerializableGUID GetGuidForObject(GameObject gameObject, ReferencesDatabase runtime)
         {
             var existedGuidForThisObject = runtime.GetGuidByObjectReference(gameObject);
-            if (existedGuidForThisObject != null)
+            if (existedGuidForThisObject != default)
             {
-                return existedGuidForThisObject.Value.ToSerializableGUID();
+                return existedGuidForThisObject.ToVanillaSerializableGUID();
             }
 
-            var newGuid = SerializableGUID.Generate();
-            runtime.AddObjectReference(newGuid.ToGUID(), gameObject);
-            return newGuid;
+            var newGuid = SerializableGUIDJengaVersion.Generate();
+            runtime.AddObjectReference(newGuid, gameObject);
+            return newGuid.ToVanillaSerializableGUID();
         }
     }
 }

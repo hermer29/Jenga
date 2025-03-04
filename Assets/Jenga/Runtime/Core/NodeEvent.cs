@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR
 using System;
+using Jenga.Core;
 using UnityEngine;
 
 namespace Jenga.Runtime
@@ -7,8 +8,8 @@ namespace Jenga.Runtime
     [Serializable]
     public class NodeEvent
     {
-        public string SendersGuid;
-        public string ReceiversGuid;
+        public SerializableGUIDJengaVersion SendersGuid;
+        public SerializableGUIDJengaVersion ReceiversGuid;
         public string ReceiversMethodName;
         public string SendersEventName;
 

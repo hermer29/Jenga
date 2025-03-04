@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Jenga.Core;
 using Jenga.Core.Utilities;
 using Jenga.Core.Utilities.Reactivity;
 using Jenga.Editor.Base;
@@ -33,19 +34,19 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
                 var referencesDatabase = GetRelatedReferencesDatabase();
                 var assetModel = (ScriptGraphAsset) scriptGraphModel.AssetModel;
                 var gameObjectGuid = GameObjectGuid.Value;
-                var gameObject = (GameObject) referencesDatabase.GetObjectReferenceByGuid(gameObjectGuid.ToGUID());
+                var gameObject = (GameObject) referencesDatabase.GetObjectReferenceByGuid(gameObjectGuid.ToSerializableGUIDJengaVersion());
                 var componentGuid = scriptNodesGuid;
                 var scriptNodeModel = (ScriptNodeModel)assetModel.GraphModel.NodeModels.FirstOrDefault(x =>
                     x is ScriptNodeModel nodeModel && nodeModel.PersistentGuid == componentGuid);
-                referencesDatabase.AddObjectReference(componentGuid.ToGUID(), gameObject.AddComponent(scriptNodeModel.MonoScriptType));
+                referencesDatabase.AddObjectReference(componentGuid.ToSerializableGUIDJengaVersion(), gameObject.AddComponent(scriptNodeModel.MonoScriptType));
             }
 
             void OnElementRemoved(SerializableGUID scriptNodeGuid)
             {
                 var referencesDatabase = GetRelatedReferencesDatabase();
-                var component = referencesDatabase.GetObjectReferenceByGuid(scriptNodeGuid.ToGUID());
+                var component = referencesDatabase.GetObjectReferenceByGuid(scriptNodeGuid.ToSerializableGUIDJengaVersion());
                 Object.DestroyImmediate(component);
-                referencesDatabase.RemoveObjectReference(scriptNodeGuid.ToGUID());
+                referencesDatabase.RemoveObjectReference(scriptNodeGuid.ToSerializableGUIDJengaVersion());
             }
         }
 

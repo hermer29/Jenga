@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using Jenga.Core.Utilities;
 using Jenga.Editor.Base;
 using Jenga.Editor.Features.GameObjectGraphPresentation;
@@ -69,8 +67,8 @@ namespace Jenga.Editor.ScriptNode
 
             var eventData = new NodeEvent
             {
-                ReceiversGuid = receiver.PersistentGuid.ToString(),
-                SendersGuid = sender.PersistentGuid.ToString(),
+                ReceiversGuid = receiver.PersistentGuid.ToSerializableGUIDJengaVersion(),
+                SendersGuid = sender.PersistentGuid.ToSerializableGUIDJengaVersion(),
                 ReceiversMethodName = receiversPort.UniqueName,
                 SendersEventName = sendersPort.UniqueName,
                 
@@ -105,7 +103,7 @@ namespace Jenga.Editor.ScriptNode
                 return;
 
             Serializer = new ScriptSerializer((ScriptGraphModel)m_AssetModel.GraphModel,
-                Guid.ToGUID(), MonoScriptGuid, RuntimeUtility.FindRelatedRuntimeOnActiveScene((GraphAssetModel)AssetModel));
+                PersistentGuid, MonoScriptGuid, RuntimeUtility.FindRelatedRuntimeOnActiveScene((GraphAssetModel)AssetModel));
             var type = MonoScriptType;
             Title = type.Name;
 

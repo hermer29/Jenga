@@ -4,6 +4,7 @@ using Jenga.Core.Utilities;
 using Jenga.Core.Utilities.Reactivity;
 using Jenga.Editor.Base;
 using Jenga.Editor.ScriptNode;
+using Jenga.Editor.Utility;
 using Jenga.Runtime;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
 using UnityEngine;
@@ -34,8 +35,8 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
                 var gameObjectGuid = GameObjectGuid.Value;
                 var gameObject = (GameObject) referencesDatabase.GetObjectReferenceByGuid(gameObjectGuid.ToGUID());
                 var componentGuid = scriptNodesGuid;
-                assetModel.GraphModel.TryGetModelFromGuid(scriptNodesGuid, out var graphNode);
-                var scriptNodeModel = (ScriptNodeModel)graphNode;
+                var scriptNodeModel = (ScriptNodeModel)assetModel.GraphModel.NodeModels.FirstOrDefault(x =>
+                    x is ScriptNodeModel nodeModel && nodeModel.PersistentGuid == componentGuid);
                 referencesDatabase.AddObjectReference(componentGuid.ToGUID(), gameObject.AddComponent(scriptNodeModel.MonoScriptType));
             }
 
@@ -55,27 +56,27 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
                 return RelatedPrefab.GetComponent<ReferencesDatabase>();
             }
             var scriptGraphModel = GraphModel as ScriptGraphModel;
-            return scriptGraphModel.CurrentRuntime.Value.ReferencesDatabase;
+            return RuntimeUtility.FindRelatedRuntimeOnActiveScene((GraphAssetModel)scriptGraphModel.AssetModel).ReferencesDatabase;
         }
 
         public override void OnDragEnded()
         {
             // TODO: ЭТО ДОЛЖНО БЫТЬ В ДРУГОМ МЕСТЕ? 
-            foreach (var graphModelPlacematModel in GraphModel.NodeModels.OfType<IGameObjectPlacematSuitableNode>())
+            foreach (var scriptNodeModel in GraphModel.NodeModels.OfType<IGameObjectPlacematSuitableNode>())
             {
-                if (graphModelPlacematModel is NodeModel nodeModel)
+                if (scriptNodeModel is ScriptNodeModel nodeModel)
                 {
                     if (RectUtils.IntersectsSegment(PositionAndSize, nodeModel.Position, nodeModel.Position))
                     {
                         (nodeModel as IGameObjectPlacematSuitableNode).ContainingPlacematGuid = Guid;
-                        ContainingNodes.Add(nodeModel.Guid);
+                        ContainingNodes.Add(nodeModel.PersistentGuid);
                     }
                     else
                     {
                         if (ContainingNodes.Contains(nodeModel.Guid))
                         { 
                             (nodeModel as IGameObjectPlacematSuitableNode).ContainingPlacematGuid = default;
-                            ContainingNodes.Remove(nodeModel.Guid);
+                            ContainingNodes.Remove(nodeModel.PersistentGuid);
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Jenga.Core.Utilities;
 using Jenga.Editor.Base;
 using Jenga.Editor.Features.GameObjectGraphPresentation;
@@ -22,6 +23,7 @@ namespace Jenga.Editor.ScriptNode
         [SerializeField] public ScriptSerializer Serializer;
         public SerializableGUID ContainingGameObjectPlacemat;
         [SerializeReference] public GameObjectPlacematModel RelatedGameOjbectPlacemat;
+        public SerializableGUID PersistentGuid;
 
         public SerializableGUID ContainingPlacematGuid
         {
@@ -40,6 +42,7 @@ namespace Jenga.Editor.ScriptNode
         {
             if (scriptGuid == null)
                 return;
+            PersistentGuid = SerializableGUID.Generate();
             MonoScriptGuid = scriptGuid;
             Title = MonoScriptType.Name;
         }
@@ -51,13 +54,42 @@ namespace Jenga.Editor.ScriptNode
 
         public override void OnConnection(IPortModel selfConnectedPortModel, IPortModel otherConnectedPortModel)
         {
-            var placemat = GraphModel.PlacematModels.OfType<GameObjectPlacematModel>()
-                .FirstOrDefault(x => x.ContainingNodes.Contains(ContainingPlacematGuid));
-            if (placemat.RelatedPrefab != null)
+            var isThisNodeAReceiver = selfConnectedPortModel.Direction == PortDirection.Input;
+            var receiver = (ScriptNodeModel) (isThisNodeAReceiver ? this : otherConnectedPortModel.NodeModel);
+            var sender = (ScriptNodeModel) (!isThisNodeAReceiver ? this : otherConnectedPortModel.NodeModel);
+            var receiversPort = isThisNodeAReceiver ? selfConnectedPortModel : otherConnectedPortModel;
+            var sendersPort = !isThisNodeAReceiver ? selfConnectedPortModel : otherConnectedPortModel;
+            var receiversPlacemat = GraphModel.PlacematModels.OfType<GameObjectPlacematModel>()
+                .FirstOrDefault(x => x.Guid == receiver.ContainingPlacematGuid);
+            var sendersPlacemat = GraphModel.PlacematModels.OfType<GameObjectPlacematModel>()
+                .FirstOrDefault(x => x.Guid == sender.ContainingPlacematGuid);
+
+            if (sendersPlacemat == null || receiversPlacemat == null)
+                return;
+
+            var eventData = new NodeEvent
             {
-                var database = placemat.RelatedPrefab.GetComponent<ReferencesDatabase>();
-                database
+                ReceiversGuid = receiver.PersistentGuid.ToString(),
+                SendersGuid = sender.PersistentGuid.ToString(),
+                ReceiversMethodName = receiversPort.UniqueName,
+                SendersEventName = sendersPort.UniqueName,
+                
+                ReceiversPrefab = receiversPlacemat.RelatedPrefab,
+                SendersPrefab = sendersPlacemat.RelatedPrefab
+            };
+
+            if (receiversPlacemat.RelatedPrefab != null)
+            {
+                var database = receiversPlacemat.RelatedPrefab.GetComponent<ReferencesDatabase>();
+                database.AddEvent(eventData);
             }
+            if (sendersPlacemat.RelatedPrefab != null)
+            {
+                var database = receiversPlacemat.RelatedPrefab.GetComponent<ReferencesDatabase>();
+                database.AddEvent(eventData);
+            }
+            RuntimeUtility.FindRelatedRuntimeOnActiveScene((GraphAssetModel)AssetModel).ReferencesDatabase
+                .AddEvent(eventData);
         }
 
         public override void OnDisconnection(IPortModel selfConnectedPortModel, IPortModel otherConnectedPortModel)
@@ -96,7 +128,7 @@ namespace Jenga.Editor.ScriptNode
                 {
                     if (RectUtils.IntersectsSegment(placematModel.PositionAndSize, Position, Position))
                     {
-                        placematModel.ContainingNodes.Add(Guid);
+                        placematModel.ContainingNodes.Add(PersistentGuid);
                         ContainingGameObjectPlacemat = placematModel.Guid;
                     }
                     else
@@ -104,7 +136,7 @@ namespace Jenga.Editor.ScriptNode
                         if (placematModel.ContainingNodes.Contains(Guid))
                         {
                             ContainingGameObjectPlacemat = default;
-                            placematModel.ContainingNodes.Remove(Guid);
+                            placematModel.ContainingNodes.Remove(PersistentGuid);
                         }
                     }
                 }

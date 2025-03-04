@@ -1,60 +1,87 @@
-﻿#if UNITY_EDITOR
+﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
+using System.Reflection;
 using UnityEngine;
+using UnityEngine.Assertions;
+using Object = UnityEngine.Object;
 
 namespace Jenga.Runtime
 {
-    public class ReferencesDatabase : MonoBehaviour
+    public partial class ReferencesDatabase : MonoBehaviour
     {
-        [SerializeField] 
-        private SerializableDictionary<GUID, UnityEngine.Object> objectReferences;
+        public class NodesSendersEvent
+        {
+            public HashSet<string> ReceiversGuids = new HashSet<string>();
+            public UnityEngine.Object Obj;
+        }
 
         [SerializeField]
         private List<NodeEvent> events;
 
-        public void AddObjectReference(GUID guid, UnityEngine.Object referenced)
-        {
-            objectReferences.Add(guid, referenced);
-        }
+        [SerializeField] 
+        private SerializableDictionary<string, UnityEngine.Object> objectReferences;
 
-        public void AddEvent(NodeEvent evt)
-        {
-            events.Add(evt);
-        }
+        private static event Action<NodeEvent> EventRegisterRequested;
+        private static event Action<string, UnityEngine.Object> ObjectRegisterRequested;
 
-        public void RemoveEvent(NodeEvent evt)
-        {
-            events.Remove(evt);
-        }
+        private static ReferencesDatabase Master;
 
-        public void DeleteObject(GUID guid)
-        {
-            Destroy(objectReferences[guid]);
-            objectReferences.Remove(guid);
-        }
+        private HashSet<string> eventsInGame;
+        private Dictionary<string, UnityEngine.Object> componentsInGame;
 
-        public UnityEngine.Object GetObjectReferenceByGuid(GUID guid)
+        public void Awake()
         {
-            objectReferences.TryGetValue(guid, out var result);
-            return result;
-        }
-
-        public GUID? GetGuidByObjectReference(UnityEngine.Object obj)
-        {
-            foreach (var (key, value) in objectReferences)
+            if (Master == null)
             {
-                if (value == obj)
-                    return key;
+                Master = this;
+                eventsInGame = new HashSet<string>();
+                componentsInGame = new Dictionary<string, Object>();
+                EventRegisterRequested += HandleRegisteringEvent;
+                ObjectRegisterRequested += HandleRegisteringObject;
             }
 
-            return null;
+            foreach (var (key, value) in objectReferences)
+            {
+                ObjectRegisterRequested!.Invoke(key, value);
+            }
+            
+            foreach (var nodeEvent in events)
+            {
+                EventRegisterRequested!.Invoke(nodeEvent);
+            }
         }
 
-        public void RemoveObjectReference(GUID guid)
+        private void HandleRegisteringEvent(NodeEvent nodeEvent)
         {
-            objectReferences.Remove(guid);
+            if (componentsInGame.ContainsKey(nodeEvent.SendersGuid) && componentsInGame.ContainsKey(nodeEvent.ReceiversGuid))
+            {
+                var unitedGuid = nodeEvent.SendersGuid + nodeEvent.ReceiversGuid + nodeEvent.SendersEventName + nodeEvent.ReceiversMethodName;
+                
+                if (!eventsInGame.Contains(unitedGuid))
+                {
+                    eventsInGame.Add(unitedGuid);
+                    SubscribeMethodToEvent(nodeEvent);
+                }
+            }
+        }
+
+        private void SubscribeMethodToEvent(NodeEvent nodeEvent)
+        {
+            var senderObject = componentsInGame[nodeEvent.SendersGuid];
+            var receiverObject = componentsInGame[nodeEvent.ReceiversGuid];
+            var senderType = senderObject.GetType();
+            EventInfo eventInfo = senderType.GetEvent(nodeEvent.SendersEventName);
+            Assert.IsNotNull(eventInfo, "eventInfo != null");
+            Type receiverType = receiverObject.GetType();
+            MethodInfo methodInfo = receiverType.GetMethod(nodeEvent.ReceiversMethodName);
+            Assert.IsNotNull(methodInfo, "methodInfo != null");
+            Delegate handler = Delegate.CreateDelegate(eventInfo.EventHandlerType, receiverObject, methodInfo);
+            eventInfo.AddEventHandler(senderObject, handler);
+        }
+
+        private void HandleRegisteringObject(string guid, UnityEngine.Object obj)
+        {
+            componentsInGame.Add(guid, obj);
         }
     }
 }
-#endif

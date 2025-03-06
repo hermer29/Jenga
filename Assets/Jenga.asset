@@ -9,31 +9,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 51de080376b3a4f5f950e5050da81e60, type: 3}
   m_Name: Jenga
-  m_EditorClassIdentifier: JengaEditor:Jenga.Editor.Base:ScriptGraphAsset
+  m_EditorClassIdentifier: 
   m_GraphModel:
-    rid: 3364882818473656320
+    rid: 5061224754973507584
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3364882818473656320
+    - rid: 5061224754973507584
       type: {class: ScriptGraphModel, ns: Jenga.Editor.Base, asm: JengaEditor}
       data:
         m_AssetModel: {fileID: 11400000}
         m_GraphNodeModels:
-        - rid: 3364882818473656380
+        - rid: 5061224799255134248
+        - rid: 5061224799255134250
         m_EdgeModels: []
         m_BadgeModels: []
-        m_GraphEdgeModels: []
+        m_GraphEdgeModels:
+        - rid: 5061224799255134251
         m_PolymorphicEdgeModels: []
         m_StickyNoteModels: []
         m_GraphStickyNoteModels: []
         m_PlacematModels: []
         m_GraphPlacematModels:
-        - rid: 3364882818473656379
+        - rid: 5061224799255134246
+        - rid: 5061224799255134247
         m_GraphVariableModels: []
         m_GraphPortalModels: []
         m_Name: 
@@ -41,12 +44,12 @@ MonoBehaviour:
           Culture=neutral, PublicKeyToken=null
         CurrentRuntime:
           value: {fileID: 0}
-    - rid: 3364882818473656379
+    - rid: 5061224799255134246
       type: {class: GameObjectPlacematModel, ns: Jenga.Editor.Features.GameObjectGraphPresentation, asm: JengaEditor}
       data:
         m_Guid:
-          m_Value0: 4239683487825783909
-          m_Value1: 9641785872066349595
+          m_Value0: 9877181186485315853
+          m_Value1: 7422653170176483437
         m_AssetModel: {fileID: 11400000}
         m_Color: {r: 0, g: 0, b: 0, a: 0}
         m_HasUserColor: 0
@@ -54,45 +57,131 @@ MonoBehaviour:
         m_Title: Logic
         m_Position:
           serializedVersion: 2
-          x: 1473.9998
-          y: -487.99988
-          width: 682.7256
-          height: 387.0562
+          x: -135163
+          y: 56440
+          width: 609.28125
+          height: 343.42188
         m_Collapsed: 0
         m_ZOrder: 1
         m_HiddenElements: []
         GameObjectGuid:
           value:
-            m_Value0: 13783796985020933146
-            m_Value1: 18205585470294968241
+            m_Value0: 7500079097287788254
+            m_Value1: 6295315083824924971
         ContainingNodes:
           _serializedList:
-          - m_Value0: 7899201649885107976
-            m_Value1: 1289907089167813262
+          - m_Value0: 2703009145201058808
+            m_Value1: 7535506681857068449
         RelatedPrefab: {fileID: 0}
-    - rid: 3364882818473656380
-      type: {class: ScriptNodeModel, ns: Jenga.Editor.ScriptNode, asm: JengaEditor}
+    - rid: 5061224799255134247
+      type: {class: GameObjectPlacematModel, ns: Jenga.Editor.Features.GameObjectGraphPresentation, asm: JengaEditor}
       data:
         m_Guid:
-          m_Value0: 6456551296387036815
-          m_Value1: 6309772210565864017
+          m_Value0: 7461563474367030045
+          m_Value1: 16988100961112970187
         m_AssetModel: {fileID: 11400000}
         m_Color: {r: 0, g: 0, b: 0, a: 0}
         m_HasUserColor: 0
         m_Version: 1
-        m_Position: {x: 1897.7501, y: -310.7096}
-        m_Title: Spawner
+        m_Title: New Prefab
+        m_Position:
+          serializedVersion: 2
+          x: -134472
+          y: 56491
+          width: 598.7656
+          height: 448.35938
+        m_Collapsed: 0
+        m_ZOrder: 2
+        m_HiddenElements: []
+        GameObjectGuid:
+          value:
+            m_Value0: 10262400412479483533
+            m_Value1: 16115261672949842878
+        ContainingNodes:
+          _serializedList:
+          - m_Value0: 10614188865780091273
+            m_Value1: 1479103028961344636
+        RelatedPrefab: {fileID: 6359636025119980780, guid: e8ba7b8544c26f04cb76c222124fe720, type: 3}
+    - rid: 5061224799255134248
+      type: {class: ScriptNodeModel, ns: Jenga.Editor.ScriptNode, asm: JengaEditor}
+      data:
+        m_Guid:
+          m_Value0: 9797490592025764985
+          m_Value1: 2596048447890170644
+        m_AssetModel: {fileID: 11400000}
+        m_Color: {r: 0, g: 0, b: 0, a: 0}
+        m_HasUserColor: 0
+        m_Version: 1
+        m_Position: {x: -134329.31, y: 56592.227}
+        m_Title: MovingShit2
+        m_InputConstantsById:
+          m_KeyList:
+          - UpdatePOsition
+          m_ValueList:
+          - rid: 5061224799255134249
+        m_State: 0
+        m_Collapsed: 0
+        MonoScriptGuid: 099b82e09a214f13a9ec2ae2e8baf7f9
+        ContainingGameObjectPlacemat:
+          m_Value0: 7461563474367030045
+          m_Value1: 16988100961112970187
+        RelatedGameOjbectPlacemat:
+          rid: -2
+        PersistentGuid:
+          m_Value0: 10614188865780091273
+          m_Value1: 1479103028961344636
+    - rid: 5061224799255134249
+      type: {class: FloatConstant, ns: UnityEditor.GraphToolsFoundation.Overdrive.BasicModel, asm: Unity.GraphTools.Foundation.Overdrive.Model}
+      data:
+        m_Value: 0
+    - rid: 5061224799255134250
+      type: {class: ScriptNodeModel, ns: Jenga.Editor.ScriptNode, asm: JengaEditor}
+      data:
+        m_Guid:
+          m_Value0: 13433405662414303003
+          m_Value1: 1831631926819475730
+        m_AssetModel: {fileID: 11400000}
+        m_Color: {r: 0, g: 0, b: 0, a: 0}
+        m_HasUserColor: 0
+        m_Version: 1
+        m_Position: {x: -134855.16, y: 56524.742}
+        m_Title: InputProcessing
         m_InputConstantsById:
           m_KeyList: []
           m_ValueList: []
         m_State: 0
         m_Collapsed: 0
-        MonoScriptGuid: 4158fcfc757b4d3d83b0b749f75d03d9
+        MonoScriptGuid: 1be4de8fd7d55304286001c91f2e9ccd
         ContainingGameObjectPlacemat:
-          m_Value0: 4239683487825783909
-          m_Value1: 9641785872066349595
+          m_Value0: 9877181186485315853
+          m_Value1: 7422653170176483437
         RelatedGameOjbectPlacemat:
           rid: -2
         PersistentGuid:
-          m_Value0: 7899201649885107976
-          m_Value1: 1289907089167813262
+          m_Value0: 2703009145201058808
+          m_Value1: 7535506681857068449
+    - rid: 5061224799255134251
+      type: {class: EdgeModel, ns: UnityEditor.GraphToolsFoundation.Overdrive.BasicModel, asm: Unity.GraphTools.Foundation.Overdrive.Model}
+      data:
+        m_Guid:
+          m_Value0: 14646014192024402584
+          m_Value1: 16602523823875117731
+        m_AssetModel: {fileID: 11400000}
+        m_Color: {r: 0, g: 0, b: 0, a: 0}
+        m_HasUserColor: 0
+        m_Version: 1
+        m_FromPortReference:
+          m_NodeModelGuid:
+            m_Value0: 13433405662414303003
+            m_Value1: 1831631926819475730
+          m_GraphAssetModel: {fileID: 11400000}
+          m_UniqueId: SomeEvent
+        m_ToPortReference:
+          m_NodeModelGuid:
+            m_Value0: 9797490592025764985
+            m_Value1: 2596048447890170644
+          m_GraphAssetModel: {fileID: 11400000}
+          m_UniqueId: UpdatePOsition
+        m_EdgeControlPoints: []
+        m_EditMode: 0
+        m_EdgeLabel: 

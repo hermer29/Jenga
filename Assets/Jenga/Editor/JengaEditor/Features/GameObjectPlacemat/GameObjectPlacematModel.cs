@@ -11,6 +11,7 @@ using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
 using UnityEngine;
 using UnityEngine.GraphToolsFoundation.Overdrive;
 using UnityEditor.GraphToolsFoundation.Overdrive;
+using UnityEngine.Assertions;
 using Object = UnityEngine.Object;
 using RectUtils = UnityEditor.GraphToolsFoundation.Overdrive.RectUtils;
 
@@ -25,29 +26,33 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
 
         public GameObjectPlacematModel() : base()
         {
-            ContainingNodes.OnElementAdded += OnElementAdded;
-            ContainingNodes.OnElementRemoved += OnElementRemoved;
-            
-            void OnElementAdded(SerializableGUID scriptNodesGuid)
-            {
-                var scriptGraphModel = GraphModel as ScriptGraphModel;
-                var referencesDatabase = GetRelatedReferencesDatabase();
-                var assetModel = (ScriptGraphAsset) scriptGraphModel.AssetModel;
-                var gameObjectGuid = GameObjectGuid.Value;
-                var gameObject = (GameObject) referencesDatabase.GetObjectReferenceByGuid(gameObjectGuid.ToSerializableGUIDJengaVersion());
-                var componentGuid = scriptNodesGuid;
-                var scriptNodeModel = (ScriptNodeModel)assetModel.GraphModel.NodeModels.FirstOrDefault(x =>
-                    x is ScriptNodeModel nodeModel && nodeModel.PersistentGuid == componentGuid);
-                referencesDatabase.AddObjectReference(componentGuid.ToSerializableGUIDJengaVersion(), gameObject.AddComponent(scriptNodeModel.MonoScriptType));
-            }
+            ContainingNodes.OnElementAdded += OnNodeEnteredPlacemat;
+            ContainingNodes.OnElementRemoved += OnNodeLeftPlacemat;
+        }
 
-            void OnElementRemoved(SerializableGUID scriptNodeGuid)
-            {
-                var referencesDatabase = GetRelatedReferencesDatabase();
-                var component = referencesDatabase.GetObjectReferenceByGuid(scriptNodeGuid.ToSerializableGUIDJengaVersion());
-                Object.DestroyImmediate(component);
-                referencesDatabase.RemoveObjectReference(scriptNodeGuid.ToSerializableGUIDJengaVersion());
-            }
+        private void OnNodeEnteredPlacemat(SerializableGUID scriptNodesGuid)
+        {
+            var scriptGraphModel = GraphModel as ScriptGraphModel;
+            var referencesDatabase = GetRelatedReferencesDatabase();
+            Assert.IsNotNull(referencesDatabase, "referencesDatabase != null");
+            var assetModel = (ScriptGraphAsset) scriptGraphModel.AssetModel;
+            var gameObjectGuid = GameObjectGuid.Value;
+            var gameObject = referencesDatabase.GetObjectReferenceByGuid<GameObject>(gameObjectGuid.ToSerializableGUIDJengaVersion());
+            Assert.IsNotNull(gameObject, $"gameObject != null, reference path: {HierarchyUtility.GetGameObjectPathWithIndex(referencesDatabase.gameObject)}");
+            var componentGuid = scriptNodesGuid;
+            var scriptNodeModel = (ScriptNodeModel)assetModel.GraphModel.NodeModels.FirstOrDefault(x =>
+                x is ScriptNodeModel nodeModel && nodeModel.PersistentGuid == componentGuid);
+            Assert.IsNotNull(scriptNodeModel, "scriptNodeModel != null");
+            referencesDatabase.AddObjectReference(componentGuid.ToSerializableGUIDJengaVersion(), 
+                gameObject.AddComponent(scriptNodeModel.MonoScriptType));
+        }
+
+        private void OnNodeLeftPlacemat(SerializableGUID scriptNodeGuid)
+        {
+            var referencesDatabase = GetRelatedReferencesDatabase();
+            var component = referencesDatabase.GetObjectReferenceByGuid<Object>(scriptNodeGuid.ToSerializableGUIDJengaVersion());
+            Object.DestroyImmediate(component);
+            referencesDatabase.RemoveObjectReference(scriptNodeGuid.ToSerializableGUIDJengaVersion());
         }
 
         private ReferencesDatabase GetRelatedReferencesDatabase()

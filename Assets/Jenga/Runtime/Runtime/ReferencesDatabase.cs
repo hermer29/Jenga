@@ -57,8 +57,10 @@ namespace Jenga.Runtime
         {
             if (componentsInGame.ContainsKey(nodeEvent.SendersGuid) && componentsInGame.ContainsKey(nodeEvent.ReceiversGuid))
             {
+                var sendersAmount = componentsInGame[nodeEvent.SendersGuid].Count;
+                var receiversAmount = componentsInGame[nodeEvent.ReceiversGuid].Count;
                 var unitedGuid = SerializableGUIDJengaVersion.Generate(nodeEvent.SendersGuid, nodeEvent.ReceiversGuid) 
-                                 + nodeEvent.SendersEventName + nodeEvent.ReceiversMethodName;
+                                 + nodeEvent.SendersEventName + nodeEvent.ReceiversMethodName + $"|{sendersAmount}|{receiversAmount}|";
                 
                 if (!eventsInGame.Contains(unitedGuid))
                 {
@@ -75,11 +77,14 @@ namespace Jenga.Runtime
             var senderType = senderObject.GetType();
             EventInfo eventInfo = senderType.GetEvent(nodeEvent.SendersEventName);
             Assert.IsNotNull(eventInfo, "eventInfo != null");
-            Type receiverType = receiverObject.GetType();
+            Type receiverType = receiverObject.First().GetType();
             MethodInfo methodInfo = receiverType.GetMethod(nodeEvent.ReceiversMethodName);
             Assert.IsNotNull(methodInfo, "methodInfo != null");
-            Delegate handler = Delegate.CreateDelegate(eventInfo.EventHandlerType, receiverObject, methodInfo);
-            eventInfo.AddEventHandler(senderObject, handler);
+            foreach (var o in receiverObject)
+            {
+                Delegate handler = Delegate.CreateDelegate(eventInfo.EventHandlerType, o, methodInfo);
+                eventInfo.AddEventHandler(senderObject, handler);
+            }
         }
 
         private void HandleRegisteringObject(SerializableGUIDJengaVersion guid, UnityEngine.Object obj)
@@ -89,6 +94,18 @@ namespace Jenga.Runtime
                 componentsInGame.Add(guid, new List<Object>());
             }
             componentsInGame[guid].Add(obj);
+        }
+
+        [ContextMenu("Clear all")]
+        public void ClearAll()
+        {
+            events.Clear();
+            foreach (KeyValuePair<SerializableGUIDJengaVersion,Object> keyValuePair in objectReferences)
+            {
+                if(keyValuePair.Value is not GameObject)
+                    Destroy(keyValuePair.Value);   
+            }
+            objectReferences.Clear();
         }
     }
 }

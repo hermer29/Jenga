@@ -6,6 +6,7 @@ using Jenga.Editor.Features.GameObjectGraphPresentation;
 using Jenga.Editor.Features.ScriptsSerialization;
 using Jenga.Editor.Utility;
 using Jenga.Runtime;
+using UnityEditor;
 using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEditor.GraphToolsFoundation.Overdrive.BasicModel;
 using UnityEngine;

@@ -6,7 +6,9 @@ using Jenga.Editor.Utility;
 using Jenga.Runtime;
 using UnityEditor;
 using UnityEditor.GraphToolsFoundation.Overdrive;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.GraphToolsFoundation.CommandStateObserver;
 using UnityEngine.GraphToolsFoundation.Overdrive;
 
@@ -43,39 +45,16 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
             GameObject selectedGameObject = (GameObject)(context ? context : 
                 await GameObjectSelectorWindow.ShowWindowAsync());
 
-            ReferencesDatabase referencesDatabase;
-            UnityEngine.Object relatedPrefab = null;
-
-            var prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
-            if (PrefabUtility.IsPartOfAnyPrefab(selectedGameObject) || 
-                prefabStage != null)
-            {
-                var prefabRootObject = 
-                if (prefabStage != null)
-                {
-                    
-                }
-                var prefabInstanceRoot = PrefabUtility.GetNearestPrefabInstanceRoot(selectedGameObject);
-                relatedPrefab = PrefabUtility.GetPrefabInstanceHandle(selectedGameObject) ?? prefabStage.prefabContentsRoot;
-                if ((referencesDatabase = prefabInstanceRoot.GetComponent<ReferencesDatabase>()) == null)
-                {
-                    referencesDatabase = prefabInstanceRoot.AddComponent<ReferencesDatabase>();
-                }
-            }
-            else
-            {
-                referencesDatabase = RuntimeUtility.FindRelatedRuntimeOnActiveScene(assetModel).ReferencesDatabase;
-            }
-            
+            var referencesDatabase = GetRelatedReferencesDatabase(ref selectedGameObject, assetModel, out var relatedPrefab, out var prefabPath);
 
             using (var graphUpdater = graphToolState.GraphViewState.UpdateScope)
             {
-                var guid = GetGuidForObject(selectedGameObject, referencesDatabase);
+                var guid = GetGuidForObject(selectedGameObject, referencesDatabase, relatedPrefab, prefabPath);
                 
                 var scriptGraphModel = (ScriptGraphModel)graphToolState.GraphViewState.GraphModel;
                 var positionToSpawn = command.Position ?? new Rect(scriptGraphModel.NodeModels.First().Position, Vector2.zero);
                 var placematModel = scriptGraphModel.CreateGameObjectPlacemat(positionToSpawn, guid, selectedGameObject.name) as GameObjectPlacematModel;
-                placematModel.RelatedPrefab = relatedPrefab as GameObject;
+                placematModel.RelatedPrefab = relatedPrefab;
                 
                 if (command.Title != null)
                     placematModel.Title = command.Title;
@@ -84,7 +63,55 @@ namespace Jenga.Editor.Features.GameObjectGraphPresentation
             }
         }
 
-        private static SerializableGUID GetGuidForObject(GameObject gameObject, ReferencesDatabase runtime)
+        private static ReferencesDatabase GetRelatedReferencesDatabase(ref GameObject selectedGameObject,
+            ScriptGraphAsset assetModel, out GameObject relatedPrefab, out string prefabPath)
+        {
+            ReferencesDatabase referencesDatabase;
+            relatedPrefab = null;
+            prefabPath = string.Empty;
+            
+            if (PrefabUtility.IsPartOfAnyPrefab(selectedGameObject)) // In Prefab Instance
+            {
+                relatedPrefab = PrefabUtility.GetNearestPrefabInstanceRoot(
+                    PrefabUtility.GetPrefabInstanceHandle(selectedGameObject));
+                prefabPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(selectedGameObject);
+                referencesDatabase = GetReferencesDatabaseFromPrefabRoot(relatedPrefab);
+
+                Assert.IsNotNull(relatedPrefab, "relatedPrefab != null");
+                
+            }
+            else if (PrefabStageUtility.GetCurrentPrefabStage() != null) // In Prefab Stage 
+            {
+                var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+                relatedPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabStage.assetPath);
+                prefabPath = prefabStage.assetPath;
+                var prefabStageSelectedObjectPath = HierarchyUtility.GetGameObjectPathWithIndex(selectedGameObject);
+                selectedGameObject = HierarchyUtility.FindObjectByPath(prefabStageSelectedObjectPath, relatedPrefab);
+
+                referencesDatabase = GetReferencesDatabaseFromPrefabRoot(relatedPrefab);
+            }
+            else // In Scene 
+            {
+                referencesDatabase = RuntimeUtility.FindRelatedRuntimeOnActiveScene(assetModel).ReferencesDatabase;
+            }
+
+            Assert.IsNotNull(referencesDatabase, "referencesDatabase != null");
+            return referencesDatabase;
+        }
+
+        private static ReferencesDatabase GetReferencesDatabaseFromPrefabRoot(GameObject relatedPrefab)
+        {
+            ReferencesDatabase referencesDatabase;
+            if ((referencesDatabase = relatedPrefab.GetComponent<ReferencesDatabase>()) == null)
+            {
+                referencesDatabase = relatedPrefab.AddComponent<ReferencesDatabase>();
+            }
+
+            return referencesDatabase;
+        }
+
+        private static SerializableGUID GetGuidForObject(GameObject gameObject, ReferencesDatabase runtime, GameObject prefabRoot,
+            string prefabPath)
         {
             var existedGuidForThisObject = runtime.GetGuidByObjectReference(gameObject);
             if (existedGuidForThisObject != default)

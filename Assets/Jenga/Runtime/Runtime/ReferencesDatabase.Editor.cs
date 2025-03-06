@@ -1,4 +1,7 @@
-﻿using Jenga.Core;
+﻿using System;
+using Jenga.Core;
+using JetBrains.Annotations;
+using UnityEngine.Assertions;
 using UnityEngine.Device;
 
 namespace Jenga.Runtime
@@ -17,14 +20,25 @@ namespace Jenga.Runtime
             objectReferences.Remove(guid);
         }
 
-        public UnityEngine.Object GetObjectReferenceByGuid(SerializableGUIDJengaVersion guid)
+        [CanBeNull]
+        public TObject GetObjectReferenceByGuid<TObject>(SerializableGUIDJengaVersion guid) where TObject: UnityEngine.Object
         {
-            objectReferences.TryGetValue(guid, out var result);
-            return result;
+            if (!objectReferences.TryGetValue(guid, out var result))
+                return null;
+            if (result == null)
+            {
+                objectReferences.Remove(guid);
+                return null;
+            }
+            if (result is not TObject value)
+                throw new ArgumentException($"{result.name} is not {typeof(TObject)}. It is {result.GetType()}");
+            return value;
         }
 
         public SerializableGUIDJengaVersion GetGuidByObjectReference(UnityEngine.Object obj)
         {
+            Assert.IsNotNull(obj, "obj != null");
+            Assert.IsNotNull(objectReferences, "objectReferences != null");
             foreach (var (key, value) in objectReferences)
             {
                 if (value == obj)

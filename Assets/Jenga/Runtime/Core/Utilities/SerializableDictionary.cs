@@ -39,6 +39,8 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
 
         for (int i = 0; i < keys.Count; i++)
         {
+            if (i == values.Count)
+                break;
             dictionary[keys[i]] = values[i];
         }
     }
@@ -52,6 +54,7 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
     public void Add(TKey key, TValue value)
     {
         dictionary.Add(key, value);
+        OnBeforeSerialize();
     }
 
     public bool ContainsKey(TKey key)
@@ -61,7 +64,9 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
 
     public bool Remove(TKey key)
     {
-        return dictionary.Remove(key);
+        var isSucceeded = dictionary.Remove(key);
+        OnBeforeSerialize();
+        return isSucceeded;
     }
 
     public bool TryGetValue(TKey key, out TValue value)
@@ -73,18 +78,21 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
 
     public void Clear()
     {
-        dictionary.Clear();
+        (dictionary ??= new Dictionary<TKey, TValue>()).Clear();
+        OnBeforeSerialize();
     }
 
-    public IEnumerable<TKey> Keys => dictionary.Keys;
-    public IEnumerable<TValue> Values => dictionary.Values;
+    public IEnumerable<TKey> Keys => (dictionary ??= new Dictionary<TKey, TValue>()).Keys;
+    public IEnumerable<TValue> Values => (dictionary ??= new Dictionary<TKey, TValue>()).Values;
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
+        dictionary ??= new Dictionary<TKey, TValue>();
         return dictionary.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
+        dictionary ??= new Dictionary<TKey, TValue>();
         return ((IEnumerable)dictionary).GetEnumerator();
     }
 }

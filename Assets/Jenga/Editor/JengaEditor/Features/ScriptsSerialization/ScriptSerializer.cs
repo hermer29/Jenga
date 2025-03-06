@@ -24,6 +24,7 @@ namespace Jenga.Editor.Features.ScriptsSerialization
             this.runtime = runtime;
         }
 
-        public UnityEngine.Object CreatedComponent => runtime.ReferencesDatabase.GetObjectReferenceByGuid(guid.ToSerializableGUIDJengaVersion());
+        public UnityEngine.Object CreatedComponent => runtime.ReferencesDatabase
+            .GetObjectReferenceByGuid<UnityEngine.Object>(guid.ToSerializableGUIDJengaVersion());
     }
 }

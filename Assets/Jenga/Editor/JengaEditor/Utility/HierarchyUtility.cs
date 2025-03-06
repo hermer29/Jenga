@@ -4,70 +4,112 @@ namespace Jenga.Editor.Utility
 {
     public class HierarchyUtility
     {
-        public static GameObject FindObjectByPath(string path)
+        public static string GetGameObjectPathWithIndex(GameObject obj)
         {
-            if (string.IsNullOrEmpty(path))
-            {
-                Debug.LogError("Path is null or empty.");
-                return null;
-            }
-
-            // Split the path into individual names
-            string[] names = path.Split('/');
-
-            // Start searching from the root of the scene
-            Transform current = null;
-
-            // Iterate through the names in the path
-            foreach (string name in names)
-            {
-                if (current == null)
-                {
-                    // Find the root object with the first name
-                    GameObject rootObject = GameObject.Find(name);
-                    if (rootObject == null)
-                    {
-                        Debug.LogError($"Root object '{name}' not found in the scene.");
-                        return null;
-                    }
-                    current = rootObject.transform;
-                }
-                else
-                {
-                    // Find the child with the next name
-                    current = current.Find(name);
-                    if (current == null)
-                    {
-                        Debug.LogError($"Child object '{name}' not found under '{current.name}'.");
-                        return null;
-                    }
-                }
-            }
-
-            return current?.gameObject;
-        
-        }
-        
-        public static string GetObjectPath(GameObject obj)
-        {
+            if (obj.transform.root == obj.transform)
+                return ".";
+            
             if (obj == null)
             {
-                Debug.LogError("GameObject is null.");
+                Debug.LogError("Объект не может быть null.");
                 return string.Empty;
             }
 
-            // Start with the object's name
-            string path = obj.name;
-
-            // Traverse up the hierarchy
-            Transform parent = obj.transform.parent;
-            while (parent != null)
+            // Создаем путь, начиная с текущего объекта и двигаясь вверх по иерархии
+            string path = "/" + obj.name + GetIndexInParent(obj);
+            while (obj.transform.parent != null)
             {
-                path = parent.name + "/" + path;
-                parent = parent.parent;
+                obj = obj.transform.parent.gameObject;
+                path = "/" + obj.name + GetIndexInParent(obj) + path;
             }
 
             return path;
+        }
+
+        // Метод для получения индекса объекта в родительской иерархии
+        private static string GetIndexInParent(GameObject obj)
+        {
+            if (obj.transform.parent == null)
+            {
+                return ""; // Корневой объект не имеет индекса
+            }
+
+            // Получаем индекс объекта среди его siblings (объектов с тем же родителем)
+            int index = obj.transform.GetSiblingIndex();
+            return "[" + index + "]";
+        }
+
+        public static GameObject FindObjectByPath(string path, GameObject rootObject)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                Debug.LogError("Путь не может быть пустым.");
+                return null;
+            }
+
+            if (rootObject == null)
+            {
+                Debug.LogError("Корневой объект не может быть null.");
+                return null;
+            }
+
+            if (path == ".")
+                return rootObject;
+
+            // Разделяем путь на части
+            string[] parts = path.Split('/');
+
+            // Начинаем с указанного корневого объекта
+            GameObject currentObject = rootObject;
+
+            // Проходим по каждой части пути
+            foreach (string part in parts)
+            {
+                if (string.IsNullOrEmpty(part))
+                    continue; // Пропускаем пустые части (например, если путь начинается с "/")
+
+                // Извлекаем имя объекта и индекс
+                string objectName = part;
+                int index = 0;
+                if (part.Contains("["))
+                {
+                    int bracketIndex = part.IndexOf('[');
+                    objectName = part.Substring(0, bracketIndex);
+                    string indexString = part.Substring(bracketIndex + 1, part.IndexOf(']') - bracketIndex - 1);
+                    int.TryParse(indexString, out index);
+                }
+
+                // Ищем дочерний объект с указанным именем и индексом
+                Transform child = FindChildByNameAndIndex(currentObject.transform, objectName, index);
+                if (child == null)
+                {
+                    Debug.LogError($"Объект '{objectName}[{index}]' не найден в иерархии.");
+                    return null;
+                }
+                currentObject = child.gameObject;
+            }
+
+            return currentObject;
+        }
+
+        // Метод для поиска дочернего объекта по имени и индексу
+        private static Transform FindChildByNameAndIndex(Transform parent, string name, int index)
+        {
+            int currentIndex = 0;
+            foreach (Transform child in parent)
+            {
+                if (child.name == name)
+                {
+                    if (currentIndex == index)
+                    {
+                        return child;
+                    }
+
+                    currentIndex++;
+                }
+            }
+
+            return null;
         }
     }
 }
